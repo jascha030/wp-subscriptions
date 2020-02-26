@@ -1,0 +1,19 @@
+{
+  "name": "jascha030/wpSubscriberInterface",
+  "description": "OOP structure for WP Plugin API",
+  "version": "0.0.1",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Jascha van Aalst",
+      "email": "contact@jaschavanaalst.nl",
+      "homepage": "https://github.com/jascha030",
+      "role": "Developer"
+    }
+  ],
+  "autoload": {
+    "psr-4": {
+      "Jascha030\\WPSI\\": "src/"
+    }
+  }
+}
