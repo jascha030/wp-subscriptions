@@ -1,6 +1,6 @@
 <?php
 
-namespace Jascha030\WPSI;
+namespace Jascha030\WPSI\Subscriber;
 
 interface ActionSubscriber
 {
