@@ -8,7 +8,20 @@ class Subscription
 
     private $method;
 
+    private $arguments = [];
+
     private $invokerMethod;
+
+    public function __construct(string $name, string $method, $arguments = null)
+    {
+        $this->name = $name;
+
+        $this->method = $method;
+
+        if ($arguments) {
+            $this->arguments = $arguments;
+        }
+    }
 
     /**
      * @return mixed
@@ -24,6 +37,14 @@ class Subscription
     public function getMethod()
     {
         return $this->method;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getArguments()
+    {
+        return $this->arguments;
     }
 
     /**
