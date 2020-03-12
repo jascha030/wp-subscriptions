@@ -2,6 +2,7 @@
 
 namespace Jascha030\WPSI\Subscriber;
 
+use Jascha030\WPSI\Exception\DoesNotImplementSubscriberException;
 use Jascha030\WPSI\Subscription\SubscriptionManager;
 
 trait Subscriber
@@ -10,6 +11,8 @@ trait Subscriber
     {
         if ($this->checkSubscriptionValidity($this)) {
             SubscriptionManager::register($this);
+        } else {
+            throw new DoesNotImplementSubscriberException();
         }
     }
 
@@ -34,7 +37,7 @@ trait Subscriber
         return $class::$shortcodes;
     }
 
-    final private function checkSubscriptionValidity($class = false)
+    private function checkSubscriptionValidity($class = false)
     {
         if (! $class) {
             $class = get_called_class();
