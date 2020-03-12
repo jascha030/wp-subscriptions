@@ -82,16 +82,6 @@ class SubscriptionManager
      *
      * @return array
      */
-    /**
-     * @param ShortcodeSubscriber $subscriber
-     *
-     * @return array
-     */
-    /**
-     * @param ShortcodeSubscriber $subscriber
-     *
-     * @return array
-     */
     private static function getShortcodeSubscriptions(ShortcodeSubscriber $subscriber)
     {
         $shortcodes = [];
@@ -105,16 +95,6 @@ class SubscriptionManager
         return $shortcodes;
     }
 
-    /**
-     * @param $subscriptions
-     *
-     * @throws DoesNotImplementSubscriptionException
-     */
-    /**
-     * @param $subscriptions
-     *
-     * @throws DoesNotImplementSubscriptionException
-     */
     /**
      * @param $subscriptions
      *
