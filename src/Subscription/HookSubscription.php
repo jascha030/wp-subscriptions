@@ -2,7 +2,7 @@
 
 namespace Jascha030\WPSI\Subscription;
 
-class HookSubscription
+class HookSubscription implements Subscription
 {
     private $hook;
 
