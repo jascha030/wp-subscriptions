@@ -6,11 +6,10 @@ use Jascha030\WPSI\Exception\DoesNotImplementSubscriptionException;
 use Jascha030\WPSI\Subscriber\ActionSubscriber;
 use Jascha030\WPSI\Subscriber\FilterSubscriber;
 use Jascha030\WPSI\Subscriber\ShortcodeSubscriber;
-use Jascha030\WPSI\Subscriber\Subscriber;
 
 class SubscriptionManager
 {
-    public static function register(Subscriber $object)
+    public static function register($object)
     {
         $s = [];
         $s = array_merge($s, ($object instanceof ActionSubscriber) ? self::getActionSubscriptions($object) : []);
