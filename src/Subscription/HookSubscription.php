@@ -2,31 +2,25 @@
 
 namespace Jascha030\WPSI\Subscription;
 
+use Jascha030\WPSI\Exception\InvalidMethodException;
+
 class HookSubscription implements Subscription
 {
     private $hook;
 
     private $class;
 
-    private $method;
-
     private $arguments = [];
 
-    public function __construct(string $hook, $class = null, $arguments = null, string $method = null)
+    private $method;
+
+    public function __construct(string $hook, $class, $arguments)
     {
         $this->hook = $hook;
 
-        if ($class) {
-            $this->class = $class;
-        }
+        $this->class = $class;
 
-        if ($arguments) {
-            $this->arguments = $arguments;
-        }
-
-        if ($method) {
-            $this->method = $method;
-        }
+        $this->arguments = $arguments;
     }
 
     /**
@@ -55,7 +49,7 @@ class HookSubscription implements Subscription
      */
     public function getMethod()
     {
-        return $this->method;
+        return ''; // This Subscription is not meant to be used directly.
     }
 
     public function subscribe()
@@ -81,7 +75,7 @@ class HookSubscription implements Subscription
                 add_filter(...$arguments);
                 break;
             default:
-                throw new \Exception("Invalid Subscription method");
+                throw new InvalidMethodException();
                 break;
         }
     }
