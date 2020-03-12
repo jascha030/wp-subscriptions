@@ -2,6 +2,7 @@
 
 namespace Jascha030\WPSI\Subscription;
 
+use Jascha030\WPSI\Exception\DoesNotImplementSubscriptionException;
 use Jascha030\WPSI\Subscriber\ActionSubscriber;
 use Jascha030\WPSI\Subscriber\FilterSubscriber;
 use Jascha030\WPSI\Subscriber\ShortcodeSubscriber;
@@ -15,6 +16,7 @@ class SubscriptionManager
         $s = array_merge($s, ($object instanceof ActionSubscriber) ? self::getActionSubscriptions($object) : []);
         $s = array_merge($s, ($object instanceof FilterSubscriber) ? self::getFilterSubscriptions($object) : []);
         $s = array_merge($s, ($object instanceof ShortcodeSubscriber) ? self::getShortcodeSubscriptions($object) : []);
+
         self::subscribeToAll($s);
     }
 
@@ -74,6 +76,8 @@ class SubscriptionManager
         foreach ($subscriptions as $subscription) {
             if ($subscription instanceof Subscription) {
                 $subscription->subscribe();
+            } else {
+                throw new DoesNotImplementSubscriptionException();
             }
         }
     }
