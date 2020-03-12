@@ -6,18 +6,26 @@ class Subscription
 {
     private $hook;
 
+    private $class;
+
     private $method;
 
     private $arguments = [];
 
-    public function __construct(string $hook, string $method, array $arguments = null)
+    public function __construct(string $hook, string $class = null, array $arguments = null, string $method = null)
     {
         $this->hook = $hook;
 
-        $this->method = $method;
+        if ($class) {
+            $this->class = $class;
+        }
 
         if ($arguments) {
             $this->arguments = $arguments;
+        }
+
+        if ($method) {
+            $this->method = $method;
         }
     }
 
