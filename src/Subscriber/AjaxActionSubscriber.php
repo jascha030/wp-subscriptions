@@ -5,7 +5,7 @@ namespace Jascha030\WPSI\Subscriber;
 class AjaxActionSubscriber implements ActionSubscriber
 {
     USE Subscriber;
-    
+
     const WP_AJAX = "wp_ajax_";
 
     const NOPRIV = "wp_ajax_nopriv_";
