@@ -2,7 +2,7 @@
 
 namespace Jascha030\WPSI\Subscription;
 
-class FilterSubscription extends Subscription
+class FilterHookSubscription extends HookSubscription
 {
     private $method = 'add_filter';
 }

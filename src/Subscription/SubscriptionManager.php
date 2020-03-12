@@ -25,10 +25,10 @@ class SubscriptionManager
             foreach ($subscriber->getActions() as $hook => $parameters) {
                 if (is_array($parameters) && is_array($parameters[0])) {
                     foreach ($parameters[0] as $actionParams) {
-                        $actions[] = new ActionSubscription($hook, $subscriber, $actionParams);
+                        $actions[] = new ActionHookSubscription($hook, $subscriber, $actionParams);
                     }
                 } else {
-                    $actions[] = new ActionSubscription($hook, $subscriber, $parameters);
+                    $actions[] = new ActionHookSubscription($hook, $subscriber, $parameters);
                 }
             }
         }
@@ -44,10 +44,10 @@ class SubscriptionManager
             foreach ($subscriber->getFilters() as $hook => $parameters) {
                 if (is_array($parameters) && is_array($parameters[0])) {
                     foreach ($parameters[0] as $filterParams) {
-                        $filters[] = new FilterSubscription($hook, $subscriber, $filterParams);
+                        $filters[] = new FilterHookSubscription($hook, $subscriber, $filterParams);
                     }
                 } else {
-                    $filters[] = new FilterSubscription($hook, $subscriber, $parameters);
+                    $filters[] = new FilterHookSubscription($hook, $subscriber, $parameters);
                 }
             }
         }
@@ -58,7 +58,7 @@ class SubscriptionManager
     private static function subscribeToAll($subscriptions)
     {
         foreach ($subscriptions as $subscription) {
-            if ($subscription instanceof Subscription) {
+            if ($subscription instanceof HookSubscription) {
                 $subscription->subscribe();
             }
         }

@@ -2,7 +2,7 @@
 
 namespace Jascha030\WPSI\Subscription;
 
-class ActionSubscription extends Subscription
+class ActionHookSubscription extends HookSubscription
 {
     private $method = 'add_action';
 }
