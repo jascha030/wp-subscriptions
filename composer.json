@@ -1,6 +1,6 @@
 {
   "name": "jascha030/wpSubscriberInterface",
-  "description": "OOP structure for WP Plugin API",
+  "description": "OOP backbone for Wordpress Plugin development",
   "version": "0.0.1",
   "license": "MIT",
   "authors": [
