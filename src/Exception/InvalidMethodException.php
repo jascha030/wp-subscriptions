@@ -2,6 +2,8 @@
 
 namespace Jascha030\WPSI\Exception;
 
-class InvalidMethodException extends \Exception
+use Exception;
+
+class InvalidMethodException extends Exception
 {
 }
