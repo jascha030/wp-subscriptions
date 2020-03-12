@@ -2,7 +2,4 @@
 
 namespace Jascha030\WPSI\Exception;
 
-class InvalidFunctionException
-{
-
-}
+class InvalidFunctionException extends \Exception {}

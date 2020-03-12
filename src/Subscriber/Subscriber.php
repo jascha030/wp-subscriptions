@@ -4,7 +4,7 @@ namespace Jascha030\WPSI\Subscriber;
 
 use Jascha030\WPSI\Subscription\SubscriptionManager;
 
-trait HookSubscriber
+trait Subscriber
 {
     final public function run()
     {
