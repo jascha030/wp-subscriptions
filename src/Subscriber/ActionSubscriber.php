@@ -4,5 +4,5 @@ namespace Jascha030\WPSI\Subscriber;
 
 interface ActionSubscriber
 {
-    public static function getActions();
+    public function getActions();
 }

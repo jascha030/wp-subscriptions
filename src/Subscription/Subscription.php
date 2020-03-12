@@ -4,17 +4,15 @@ namespace Jascha030\WPSI\Subscription;
 
 class Subscription
 {
-    private $name;
+    private $hook;
 
     private $method;
 
     private $arguments = [];
 
-    private $invokerMethod;
-
-    public function __construct(string $name, string $method, $arguments = null)
+    public function __construct(string $hook, string $method, array $arguments = null)
     {
-        $this->name = $name;
+        $this->hook = $hook;
 
         $this->method = $method;
 
@@ -24,17 +22,17 @@ class Subscription
     }
 
     /**
-     * @return mixed
+     * @return string
      */
-    public function getName()
+    public function getHook(): string
     {
-        return $this->name;
+        return $this->hook;
     }
 
     /**
      * @return mixed
      */
-    public function getMethod()
+    public function getMethod(): string
     {
         return $this->method;
     }
@@ -42,16 +40,8 @@ class Subscription
     /**
      * @return mixed
      */
-    public function getArguments()
+    public function getArguments(): array
     {
         return $this->arguments;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getInvokerMethod()
-    {
-        return $this->invokerMethod;
     }
 }
