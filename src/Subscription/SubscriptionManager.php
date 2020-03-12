@@ -4,11 +4,11 @@ namespace Jascha030\WPSI\Subscription;
 
 use Jascha030\WPSI\Subscriber\ActionSubscriber;
 use Jascha030\WPSI\Subscriber\FilterSubscriber;
-use Jascha030\WPSI\Subscriber\PluginSubscriber;
+use Jascha030\WPSI\Subscriber\HookSubscriber;
 
 class SubscriptionManager
 {
-    public static function register(PluginSubscriber $object)
+    public static function register(HookSubscriber $object)
     {
         $filters       = ($object instanceof ActionSubscriber) ? self::getActionSubscriptions($object) : [];
         $actions       = ($object instanceof FilterSubscriber) ? self::getFilterSubscriptions($object) : [];
