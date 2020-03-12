@@ -2,19 +2,22 @@
 
 namespace Jascha030\WPSI\Subscription;
 
+use Jascha030\WPSI\Exception\DoesNotImplementSubscriptionException;
 use Jascha030\WPSI\Subscriber\ActionSubscriber;
 use Jascha030\WPSI\Subscriber\FilterSubscriber;
-use Jascha030\WPSI\Subscriber\HookSubscriber;
+use Jascha030\WPSI\Subscriber\ShortcodeSubscriber;
+use Jascha030\WPSI\Subscriber\Subscriber;
 
 class SubscriptionManager
 {
-    public static function register(HookSubscriber $object)
+    public static function register(Subscriber $object)
     {
-        $filters       = ($object instanceof ActionSubscriber) ? self::getActionSubscriptions($object) : [];
-        $actions       = ($object instanceof FilterSubscriber) ? self::getFilterSubscriptions($object) : [];
-        $subscriptions = array_merge($actions, $filters);
+        $s = [];
+        $s = array_merge($s, ($object instanceof ActionSubscriber) ? self::getActionSubscriptions($object) : []);
+        $s = array_merge($s, ($object instanceof FilterSubscriber) ? self::getFilterSubscriptions($object) : []);
+        $s = array_merge($s, ($object instanceof ShortcodeSubscriber) ? self::getShortcodeSubscriptions($object) : []);
 
-        self::subscribeToAll($subscriptions);
+        self::subscribeToAll($s);
     }
 
     private static function getActionSubscriptions(ActionSubscriber $subscriber)
@@ -55,11 +58,26 @@ class SubscriptionManager
         return $filters;
     }
 
+    private static function getShortcodeSubscriptions(ShortcodeSubscriber $subscriber)
+    {
+        $shortcodes = [];
+
+        if ($subscriber->getShortcodes()) {
+            foreach ($subscriber->getShortcodes() as $tag => $function) {
+                $shortcodes[] = new ShortcodeSubscription($tag, [$subscriber, $function]);
+            }
+        }
+
+        return $shortcodes;
+    }
+
     private static function subscribeToAll($subscriptions)
     {
         foreach ($subscriptions as $subscription) {
-            if ($subscription instanceof HookSubscription) {
+            if ($subscription instanceof Subscription) {
                 $subscription->subscribe();
+            } else {
+                throw new DoesNotImplementSubscriptionException();
             }
         }
     }

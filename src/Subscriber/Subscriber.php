@@ -4,7 +4,7 @@ namespace Jascha030\WPSI\Subscriber;
 
 use Jascha030\WPSI\Subscription\SubscriptionManager;
 
-trait HookSubscriber
+trait Subscriber
 {
     final public function run()
     {
@@ -17,14 +17,21 @@ trait HookSubscriber
     {
         $class = get_called_class();
 
-        return ($this->checkSubscriptionValidity($class)) ? $class::$actions : false;
+        return $class::$actions;
     }
 
     public function getFilters()
     {
         $class = get_called_class();
 
-        return ($this->checkSubscriptionValidity($class)) ? $class::$filters : false;
+        return $class::$filters;
+    }
+
+    public function getShortcodes()
+    {
+        $class = get_called_class();
+
+        return $class::$shortcodes;
     }
 
     final private function checkSubscriptionValidity($class = false)
@@ -35,6 +42,7 @@ trait HookSubscriber
 
         $implements = class_implements($class);
 
-        return count(array_intersect($implements, [ActionSubscriber::class, FilterSubscriber::class])) > 0;
+        return count(array_intersect($implements,
+                [ShortcodeSubscriber::class, ActionSubscriber::class, FilterSubscriber::class])) > 0;
     }
 }
