@@ -2,4 +2,6 @@
 
 namespace Jascha030\WPSI\Exception;
 
-class DoesNotImplementSubscriptionException extends InvalidClassException {}
+class DoesNotImplementSubscriptionException extends InvalidClassException
+{
+}
