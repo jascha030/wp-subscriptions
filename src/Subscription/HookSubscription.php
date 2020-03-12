@@ -4,6 +4,11 @@ namespace Jascha030\WPSI\Subscription;
 
 use Jascha030\WPSI\Exception\InvalidMethodException;
 
+/**
+ * Class HookSubscription
+ *
+ * @package Jascha030\WPSI\Subscription
+ */
 class HookSubscription implements Subscription
 {
     private $hook;
@@ -12,8 +17,15 @@ class HookSubscription implements Subscription
 
     private $arguments = [];
 
-    private $method;
+    private $method = '';
 
+    /**
+     * HookSubscription constructor.
+     *
+     * @param string $hook
+     * @param $class
+     * @param $arguments
+     */
     public function __construct(string $hook, $class, $arguments)
     {
         $this->hook = $hook;
@@ -31,6 +43,9 @@ class HookSubscription implements Subscription
         return $this->hook;
     }
 
+    /**
+     * @return mixed
+     */
     public function getClass()
     {
         return $this->class;
@@ -49,7 +64,7 @@ class HookSubscription implements Subscription
      */
     public function getMethod()
     {
-        return ''; // This Subscription is not meant to be used directly.
+        return $this->method; // This Subscription is not meant to be used directly.
     }
 
     public function subscribe()
@@ -67,16 +82,18 @@ class HookSubscription implements Subscription
             ];
         }
 
-        switch ($this->getMethod()) {
-            case SubscriptionMethodTypes::ACTION:
-                add_action(...$arguments);
-                break;
-            case SubscriptionMethodTypes::FILTER:
-                add_filter(...$arguments);
-                break;
-            default:
-                throw new InvalidMethodException();
-                break;
+        if (isset($arguments)) {
+            switch ($this->getMethod()) {
+                case SubscriptionMethodTypes::ACTION:
+                    add_action(...$arguments);
+                    break;
+                case SubscriptionMethodTypes::FILTER:
+                    add_filter(...$arguments);
+                    break;
+                default:
+                    throw new InvalidMethodException();
+                    break;
+            }
         }
     }
 }

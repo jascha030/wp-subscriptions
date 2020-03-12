@@ -7,8 +7,18 @@ use Jascha030\WPSI\Subscriber\ActionSubscriber;
 use Jascha030\WPSI\Subscriber\FilterSubscriber;
 use Jascha030\WPSI\Subscriber\ShortcodeSubscriber;
 
+/**
+ * Class SubscriptionManager
+ *
+ * @package Jascha030\WPSI\Subscription
+ */
 class SubscriptionManager
 {
+    /**
+     * @param $object
+     *
+     * @throws DoesNotImplementSubscriptionException
+     */
     public static function register($object)
     {
         $s = [];
@@ -19,6 +29,11 @@ class SubscriptionManager
         self::subscribeToAll($s);
     }
 
+    /**
+     * @param ActionSubscriber $subscriber
+     *
+     * @return array
+     */
     private static function getActionSubscriptions(ActionSubscriber $subscriber)
     {
         $actions = [];
@@ -38,6 +53,11 @@ class SubscriptionManager
         return $actions;
     }
 
+    /**
+     * @param FilterSubscriber $subscriber
+     *
+     * @return array
+     */
     private static function getFilterSubscriptions(FilterSubscriber $subscriber)
     {
         $filters = [];
@@ -57,6 +77,21 @@ class SubscriptionManager
         return $filters;
     }
 
+    /**
+     * @param ShortcodeSubscriber $subscriber
+     *
+     * @return array
+     */
+    /**
+     * @param ShortcodeSubscriber $subscriber
+     *
+     * @return array
+     */
+    /**
+     * @param ShortcodeSubscriber $subscriber
+     *
+     * @return array
+     */
     private static function getShortcodeSubscriptions(ShortcodeSubscriber $subscriber)
     {
         $shortcodes = [];
@@ -70,6 +105,21 @@ class SubscriptionManager
         return $shortcodes;
     }
 
+    /**
+     * @param $subscriptions
+     *
+     * @throws DoesNotImplementSubscriptionException
+     */
+    /**
+     * @param $subscriptions
+     *
+     * @throws DoesNotImplementSubscriptionException
+     */
+    /**
+     * @param $subscriptions
+     *
+     * @throws DoesNotImplementSubscriptionException
+     */
     private static function subscribeToAll($subscriptions)
     {
         foreach ($subscriptions as $subscription) {
