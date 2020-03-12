@@ -5,6 +5,11 @@ namespace Jascha030\WPSI\Subscriber;
 use Jascha030\WPSI\Exception\DoesNotImplementSubscriberException;
 use Jascha030\WPSI\Subscription\SubscriptionManager;
 
+/**
+ * Trait Subscriber
+ *
+ * @package Jascha030\WPSI\Subscriber
+ */
 trait Subscriber
 {
     final public function run()
@@ -16,6 +21,9 @@ trait Subscriber
         }
     }
 
+    /**
+     * @return mixed
+     */
     public function getActions()
     {
         $class = get_called_class();
@@ -23,6 +31,9 @@ trait Subscriber
         return $class::$actions;
     }
 
+    /**
+     * @return mixed
+     */
     public function getFilters()
     {
         $class = get_called_class();
@@ -30,6 +41,9 @@ trait Subscriber
         return $class::$filters;
     }
 
+    /**
+     * @return mixed
+     */
     public function getShortcodes()
     {
         $class = get_called_class();
@@ -37,6 +51,11 @@ trait Subscriber
         return $class::$shortcodes;
     }
 
+    /**
+     * @param bool $class
+     *
+     * @return bool
+     */
     private function checkSubscriptionValidity($class = false)
     {
         if (! $class) {

@@ -2,6 +2,11 @@
 
 namespace Jascha030\WPSI\Subscriber;
 
+/**
+ * Class AjaxActionSubscriber
+ *
+ * @package Jascha030\WPSI\Subscriber
+ */
 class AjaxActionSubscriber implements ActionSubscriber
 {
     USE Subscriber;
@@ -16,6 +21,12 @@ class AjaxActionSubscriber implements ActionSubscriber
 
     private $enforceAdminPrivilege;
 
+    /**
+     * AjaxActionSubscriber constructor.
+     *
+     * @param array $ignore
+     * @param bool $enforceAdminPrivilege
+     */
     public function __construct($ignore = [], $enforceAdminPrivilege = false)
     {
         $this->ignoredMethods = array_merge($this->ignoredMethods, $ignore);
