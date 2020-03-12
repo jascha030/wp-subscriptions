@@ -11,6 +11,13 @@ class ShortcodeSubscription implements Subscription
 
     private $function;
 
+    public function __construct(string $tag, $function)
+    {
+        $this->tag = $tag;
+
+        $this->function = $function;
+    }
+
     public function subscribe()
     {
         if (is_array($this->function)) {
