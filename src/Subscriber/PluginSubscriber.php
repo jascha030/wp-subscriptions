@@ -2,28 +2,32 @@
 
 namespace Jascha030\WPSI\Subscriber;
 
+use Jascha030\WPSI\Subscription\SubscriptionManager;
+
 trait PluginSubscriber
 {
     final public function run()
     {
-        return ($this->checkSubscriptionValidity($this)) ? true : false;
+        if ($this->checkSubscriptionValidity($this)) {
+            SubscriptionManager::register($this);
+        }
     }
 
-    protected function getActions()
+    public function getActions()
     {
         $class = get_called_class();
 
         return ($this->checkSubscriptionValidity($class)) ? $class::$actions : false;
     }
 
-    protected function getFilters()
+    public function getFilters()
     {
         $class = get_called_class();
 
         return ($this->checkSubscriptionValidity($class)) ? $class::$filters : false;
     }
 
-    private function checkSubscriptionValidity($class = false)
+    final private function checkSubscriptionValidity($class = false)
     {
         if (! $class) {
             $class = get_called_class();
