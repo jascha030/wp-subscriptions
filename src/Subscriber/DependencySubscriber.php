@@ -14,12 +14,14 @@ class DependencySubscriber
     /**
      * @var array
      */
-    public static $dependencies = [];
+    protected static $dependencies = [];
 
     /**
      * DependencySubscriber constructor.
      *
      * @param array $dependencies
+     *
+     * @throws DoesNotImplementSubscriberException
      */
     public function __construct($dependencies = [])
     {
