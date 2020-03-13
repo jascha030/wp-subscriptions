@@ -33,8 +33,12 @@ trait SubscriberTrait
 
     public function addAction($hook, $method)
     {
+        $newAction = [$hook => $method];
+
         $class = get_called_class();
-        $class::$actions[$hook] = $method;
+        if ($class instanceof ActionSubscriber) {
+            $class::$actions = (empty($class::$actions)) ? $newAction: array_merge($class::$actions, $newAction);
+        }
     }
 
     /**
