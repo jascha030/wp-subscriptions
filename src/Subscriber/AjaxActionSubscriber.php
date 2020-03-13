@@ -9,7 +9,7 @@ namespace Jascha030\WPSI\Subscriber;
  */
 class AjaxActionSubscriber implements ActionSubscriber
 {
-    USE Subscriber;
+    USE SubscriberTrait;
 
     const WP_AJAX = "wp_ajax_";
 
@@ -36,11 +36,10 @@ class AjaxActionSubscriber implements ActionSubscriber
         $methods = get_class_methods($this);
 
         foreach ($methods as $method) {
-            if (! in_array($method, $this->ignoredMethods) && ! strpos($method, "__") && ! method_exists($method,
-                    Subscriber::class)) {
-
-                self::$actions[self::WP_AJAX] = [$this, $method];
-                self::$actions[self::NOPRIV]  = [$this, $method];
+            if (! in_array($method, $this->ignoredMethods) && strpos($method,
+                    "__") !== 0 && ! method_exists(SubscriberTrait::class, $method)) {
+                $this->addAction(self::WP_AJAX . $method, $method);
+                $this->addAction(self::NOPRIV . $method, $method);
             }
         }
     }

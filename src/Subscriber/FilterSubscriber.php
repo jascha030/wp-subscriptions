@@ -7,7 +7,10 @@ namespace Jascha030\WPSI\Subscriber;
  *
  * @package Jascha030\WPSI\Subscriber
  */
-interface FilterSubscriber
+interface FilterSubscriber extends Subscriber
 {
+    /**
+     * @return mixed
+     */
     public function getFilters();
 }
