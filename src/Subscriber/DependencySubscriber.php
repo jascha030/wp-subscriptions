@@ -2,53 +2,54 @@
 
 namespace Jascha030\WPSI\Subscriber;
 
-use Jascha030\WPSI\Exception\DoesNotImplementSubscriberException;
+use Jascha030\WPSI\Subscription\DependencySubscription;
 
 /**
  * Class DependencySubscriber
  *
  * @package Jascha030\WPSI\Subscriber
  */
-class DependencySubscriber
+class DependencySubscriber extends Subscriber
 {
     /**
      * @var array
      */
-    protected static $dependencies = [];
-
-    /**
-     * DependencySubscriber constructor.
-     *
-     * @param array $dependencies
-     *
-     * @throws DoesNotImplementSubscriberException
-     */
-    public function __construct($dependencies = [])
-    {
-        self::$dependencies = array_merge($this->getDependencies(), $dependencies);
-        $this->initDependencies();
-    }
+    protected $dependencies = [];
 
     /**
      * @return array
      */
-    public function getDependencies()
+    public function getSubscriptions()
     {
-        $class = get_called_class();
-        return $class::$dependencies;
+        return $this->dependencies;
     }
 
     /**
-     * @throws DoesNotImplementSubscriberException
+     * @param $key
+     * @param $method
      */
-    public function initDependencies()
+    public function setSubscription($key, $method)
     {
-        foreach ($this->getDependencies() as $dependency) {
-            $i = class_implements($dependency);
-            if (in_array(Subscriber::class, $i)) {
-                /** @var SubscriberTrait $class */
-                $class = new $dependency();
-                $class->run();
+        $this->dependencies[$key] = $method;
+    }
+
+    protected function createSubscriptions()
+    {
+        $dependencies = [];
+
+        foreach ($this->getSubscriptions() as $dependency) {
+            if (is_string($dependency)) {
+                $className = $dependency;
+                $arguments = [];
+            } elseif (is_array($dependency) && count($dependency) > 1) {
+                $className = $dependency[0];
+                $arguments = $dependency[1];
+            } else {
+                continue;
+            }
+
+            if (is_subclass_of($className, Subscriber::class)) {
+                $dependencies[] = new DependencySubscription($className, $arguments);
             }
         }
     }

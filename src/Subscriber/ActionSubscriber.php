@@ -2,15 +2,52 @@
 
 namespace Jascha030\WPSI\Subscriber;
 
+use Jascha030\WPSI\Subscription\ActionHookSubscription;
+
 /**
- * Interface ActionSubscriber
+ * class ActionSubscriber
  *
  * @package Jascha030\WPSI\Subscriber
  */
-interface ActionSubscriber extends Subscriber
+class ActionSubscriber extends Subscriber
 {
+    protected $actions = [];
+
     /**
-     * @return mixed
+     * @return array
      */
-    public function getActions();
+    public function getSubscriptions()
+    {
+        return $this->actions;
+    }
+
+    /**
+     * @param $key
+     * @param $method
+     *
+     * @return void
+     */
+    public function setSubscription($key, $method)
+    {
+        $this->actions[$key] = $method;
+    }
+
+    /**
+     * @return array
+     */
+    protected function createSubscriptions() {
+        $subscriptions = [];
+
+        foreach ($this->getSubscriptions() as $hook => $parameters) {
+            if (is_array($parameters) && is_array($parameters[0])) {
+                foreach ($parameters[0] as $actionParams) {
+                    $actions[] = new ActionHookSubscription($hook, $this, $actionParams);
+                }
+            } else {
+                $actions[] = new ActionHookSubscription($hook, $this, $parameters);
+            }
+        }
+
+        return $subscriptions;
+    }
 }
