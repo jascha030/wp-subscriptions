@@ -2,7 +2,7 @@
 
 namespace Jascha030\WPSI\Subscriber;
 
-use Jascha030\WPSI\Subscription\Shortcode;
+use Jascha030\WPSI\Subscription\ShortcodeSubscription;
 
 /**
  * class ShortcodeSubscriber
@@ -40,7 +40,7 @@ class ShortcodeSubscriber extends Subscriber
         $shortcodes = [];
 
         foreach ($this->getSubscriptions() as $tag => $function) {
-            $shortcodes[] = new Shortcode($tag, [$this, $function]);
+            $shortcodes[] = new ShortcodeSubscription($tag, [$this, $function]);
         }
 
         return $shortcodes;
