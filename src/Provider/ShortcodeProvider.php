@@ -9,5 +9,8 @@ namespace Jascha030\WPSI\Provider;
  */
 interface ShortcodeProvider
 {
+    /**
+     * @return array
+     */
     public function getShortcodes();
 }

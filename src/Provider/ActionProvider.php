@@ -7,7 +7,10 @@ namespace Jascha030\WPSI\Provider;
  *
  * @package Jascha030\WPSI\Provider
  */
-interface ActionProvider
+interface ActionProvider extends SubscriptionProvider
 {
+    /**
+     * @return array
+     */
     public function getActions();
 }

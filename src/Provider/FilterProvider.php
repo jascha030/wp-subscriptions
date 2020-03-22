@@ -7,7 +7,10 @@ namespace Jascha030\WPSI\Provider;
  *
  * @package Jascha030\WPSI\Provider
  */
-interface FilterProvider
+interface FilterProvider extends SubscriptionProvider
 {
+    /**
+     * @return array
+     */
     public function getFilters();
 }
