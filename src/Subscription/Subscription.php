@@ -3,18 +3,21 @@
 namespace Jascha030\WPSI\Subscription;
 
 /**
- * Interface Subscription
+ * Class Subscription
  *
  * @package Jascha030\WPSI\Subscription
  */
-interface Subscription
+abstract class Subscription implements Subscribable
 {
-    /**
-     * Subscription constructor.
-     *
-     * @param array $data
-     */
-    public function __construct(array $data);
+    protected $active = false;
 
-    public function subscribe();
+    abstract public function subscribe();
+
+    /**
+     * @return bool
+     */
+    public function isActive(): bool
+    {
+        return $this->active;
+    }
 }

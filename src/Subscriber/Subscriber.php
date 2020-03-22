@@ -5,7 +5,7 @@ namespace Jascha030\WPSI\Subscriber;
 use Jascha030\WPSI\Exception\DoesNotImplementSubscriberException;
 use Jascha030\WPSI\Exception\DoesNotImplementSubscriptionException;
 use Jascha030\WPSI\Exception\InvalidClassException;
-use Jascha030\WPSI\Subscription\Subscription;
+use Jascha030\WPSI\Subscription\Subscribable;
 
 /**
  * Interface Subscriber
@@ -16,23 +16,15 @@ abstract class Subscriber
 {
     private $data = [];
 
-    private $subscriptionClass;
-
     private $subscriptions = [];
 
     /**
      * Subscriber constructor.
      *
-     * @param string $class
-     *
-     * @param array|null $data
-     *
-     * @param array|null $subscriptions
-     *
-     * @throws DoesNotImplementSubscriberException
-     * @throws InvalidClassException
+     * @param array $subscriptions
+     * @param array $data
      */
-    public function __construct(array $data = [], string $class = null, array $subscriptions = [])
+    public function __construct(array $subscriptions = [], array $data = [])
     {
         if (! empty($subscriptions)) {
             foreach ($subscriptions as $subscription) {
@@ -42,18 +34,6 @@ abstract class Subscriber
 
         if ($data) {
             $this->data = (! empty($this->data)) ? array_merge($this->data, $data) : $data;
-        }
-
-        if ($class) {
-            if (! class_exists($class)) {
-                throw new InvalidClassException("Class \"{$class}\" does not exist.");
-            }
-
-            if (! $this->validateSubscriptionClass($class)) {
-                throw new DoesNotImplementSubscriberException("\"{$class}\" does not implement Subscription.");
-            }
-
-            $this->subscriptionClass = $class;
         }
     }
 
@@ -92,7 +72,7 @@ abstract class Subscriber
         }
 
         $subscriptionClass = $this->subscriptionClass;
-        $subscriptionData  = $this->getData();
+        $subscriptionData  = $this->data;
 
         if (! is_array($subscriptionData)) {
             throw new \Exception("Invalid data.");
@@ -100,7 +80,7 @@ abstract class Subscriber
 
         foreach ($subscriptionData as $data) {
             if (is_array($data)) {
-                /** @var Subscription $subscription */
+                /** @var Subscribable $subscription */
                 $subscription = new $subscriptionClass($data);
                 $this->setSubscription($subscription);
             }
@@ -108,17 +88,9 @@ abstract class Subscriber
     }
 
     /**
-     * @return mixed
+     * @param Subscribable $subscription
      */
-    public function getData()
-    {
-        return $this->data;
-    }
-
-    /**
-     * @param Subscription $subscription
-     */
-    public function setSubscription(Subscription $subscription)
+    public function setSubscription(Subscribable $subscription)
     {
         $this->subscriptions[] = $subscription;
     }
@@ -136,6 +108,6 @@ abstract class Subscriber
 
         $implements = class_implements($class);
 
-        return (class_exists($class)) ? in_array(Subscriber::class, $implements) : false;
+        return (class_exists($class)) ? in_array(Subscribable::class, $implements) : false;
     }
 }

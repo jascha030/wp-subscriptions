@@ -2,7 +2,7 @@
 
 namespace Jascha030\WPSI\Subscriber;
 
-use Jascha030\WPSI\Subscription\FilterHookSubscription;
+use Jascha030\WPSI\Subscription\FilterSubscription;
 
 /**
  * class FilterSubscriber
@@ -42,10 +42,10 @@ class FilterSubscriber extends Subscriber
         foreach ($this->getSubscriptions() as $hook => $parameters) {
             if (is_array($parameters) && is_array($parameters[0])) {
                 foreach ($parameters[0] as $filterParams) {
-                    $filters[] = new FilterHookSubscription($hook, $this, $filterParams);
+                    $filters[] = new FilterSubscription($hook, $this, $filterParams);
                 }
             } else {
-                $filters[] = new FilterHookSubscription($hook, $this, $parameters);
+                $filters[] = new FilterSubscription($hook, $this, $parameters);
             }
         }
 

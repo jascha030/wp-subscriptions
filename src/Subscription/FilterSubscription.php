@@ -5,11 +5,11 @@ namespace Jascha030\WPSI\Subscription;
 use Exception;
 
 /**
- * Class ActionHookSubscription
+ * Class FilterSubscription
  *
  * @package Jascha030\WPSI\Subscription
  */
-class ActionHookSubscription extends HookSubscription
+class FilterSubscription extends HookSubscription
 {
     /**
      * @return void
@@ -20,7 +20,7 @@ class ActionHookSubscription extends HookSubscription
         if ($this->isActive()) {
             throw new Exception("Already subscribed"); //Todo: Make exception class.
         } else {
-            add_action($this->tag, $this->callable, $this->priority, $this->acceptedArguments);
+            add_filter($this->tag, $this->callable, $this->priority, $this->acceptedArguments);
             $this->active = true;
         }
     }
@@ -34,7 +34,7 @@ class ActionHookSubscription extends HookSubscription
         if ($this->isActive()) {
             throw new Exception("Can't unsubscribe before subscribing"); //Todo: make exception class.
         } else {
-            remove_action($this->tag, $this->callable, $this->priority, $this->acceptedArguments);
+            remove_filter($this->tag, $this->callable, $this->priority, $this->acceptedArguments);
         }
     }
 }

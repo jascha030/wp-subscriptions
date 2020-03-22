@@ -2,98 +2,61 @@
 
 namespace Jascha030\WPSI\Subscription;
 
-use Jascha030\WPSI\Exception\InvalidMethodException;
+use Exception;
 
 /**
  * Class HookSubscription
  *
  * @package Jascha030\WPSI\Subscription
  */
-class HookSubscription implements Subscription
+class HookSubscription extends Hookable implements Subscribable, Unsubscribable
 {
-    private $hook;
+    protected $tag;
 
-    private $class;
+    protected $callable;
 
-    private $arguments = [];
+    protected $priority;
 
-    private $method = '';
+    protected $acceptedArguments;
 
     /**
      * HookSubscription constructor.
      *
-     * @param string $hook
-     * @param $class
-     * @param $arguments
+     * @param $tag
+     * @param $callable
+     * @param int $priority
+     * @param int $acceptedArguments
+     *
+     * @throws Exception
      */
-    public function __construct(string $hook, $class, $arguments)
+    public function __construct($tag, $callable, $priority = 10, $acceptedArguments = 1)
     {
-        $this->hook = $hook;
+        if (! is_callable($callable)) {
+            throw new Exception("variable is not a valid callable");
+        }
 
-        $this->class = $class;
+        $this->tag = $tag;
 
-        $this->arguments = $arguments;
+        $this->callable = $callable;
+
+        $this->priority = $priority;
+
+        $this->acceptedArguments = $acceptedArguments;
     }
 
     /**
      * @return string
      */
-    public function getHook()
-    {
-        return $this->hook;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getClass()
-    {
-        return $this->class;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getArguments()
-    {
-        return $this->arguments;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getMethod()
-    {
-        return $this->method; // This Subscription is not meant to be used directly.
-    }
-
     public function subscribe()
     {
-        $parameters = $this->getArguments();
+        return '';
+    }
 
-        if (is_string($parameters)) {
-            $arguments = [$this->getHook(), [$this->getClass(), $parameters]];
-        } elseif (is_array($parameters) && isset($parameters[0])) {
-            $arguments = [
-                $this->getHook(),
-                [$this->getClass(), $parameters[0]],
-                isset($parameters[1]) ? $parameters[1] : 10,
-                isset($parameters[2]) ? $parameters[2] : 1
-            ];
-        }
-
-        if (isset($arguments)) {
-            switch ($this->getMethod()) {
-                case SubscriptionMethodTypes::ACTION:
-                    add_action(...$arguments);
-                    break;
-                case SubscriptionMethodTypes::FILTER:
-                    add_filter(...$arguments);
-                    break;
-                default:
-                    throw new InvalidMethodException();
-                    break;
-            }
-        }
+    /**
+     * @return string
+     */
+    public function unsubscribe()
+    {
+        return '';
     }
 }

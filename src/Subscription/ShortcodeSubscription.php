@@ -10,7 +10,7 @@ use Jascha030\WPSI\Exception\InvalidMethodException;
  *
  * @package Jascha030\WPSI\Subscription
  */
-class ShortcodeSubscription implements Subscription
+class ShortcodeSubscription implements Subscribable
 {
     private $tag;
 
