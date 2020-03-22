@@ -1,6 +1,6 @@
 <?php
 
-namespace Jascha030\WPSI\Subscription;
+namespace Jascha030\WPSI\Subscription\Hook;
 
 use Exception;
 

@@ -1,11 +1,11 @@
 <?php
 
-namespace Jascha030\WPSI\Subscription\Provider;
+namespace Jascha030\WPSI\Provider;
 
 /**
  * Interface FilterProvider
  *
- * @package Jascha030\WPSI\Subscription\Provider
+ * @package Jascha030\WPSI\Provider
  */
 interface FilterProvider
 {

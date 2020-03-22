@@ -1,10 +1,10 @@
 <?php
 
-namespace Jascha030\WPSI\Subscription;
+namespace Jascha030\WPSI\Subscription\Provider;
 
 use Jascha030\WPSI\Exception\DoesNotImplementSubscriberException;
 use Jascha030\WPSI\Exception\InvalidClassException;
-use Jascha030\WPSI\Subscriber\Subscriber;
+use Jascha030\WPSI\Subscription\Subscription;
 
 /**
  * Class DependencySubscription
@@ -37,14 +37,6 @@ class ProviderSubscription extends Subscription
         parent::subscribe();
 
         $className = $this->className;
-
-        if (! class_exists($className)) {
-            throw new InvalidClassException("Class with name: {$className} does not exist.");
-        }
-
-        if (! is_subclass_of($className, Subscriber::class)) {
-            throw new DoesNotImplementSubscriberException("Class: '{$className}' is not a valid Subscriber.");
-        }
 
         if ($this->arguments) {
             $this->object = new $className(...$this->arguments);

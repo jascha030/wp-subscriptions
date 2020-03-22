@@ -1,15 +1,16 @@
 <?php
 
-namespace Jascha030\WPSI\Subscription;
+namespace Jascha030\WPSI\Subscription\Hook;
 
 use Exception;
+use Jascha030\WPSI\Subscription\Unsubscribable;
 
 /**
  * Class FilterSubscription
  *
  * @package Jascha030\WPSI\Subscription
  */
-class FilterSubscription extends HookSubscription
+class FilterSubscription extends HookSubscription implements Unsubscribable
 {
     private $priority;
 

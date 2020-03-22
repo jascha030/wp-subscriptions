@@ -1,8 +1,9 @@
 <?php
 
-namespace Jascha030\WPSI\Subscription;
+namespace Jascha030\WPSI\Subscription\Hook;
 
 use Exception;
+use Jascha030\WPSI\Subscription\Unsubscribable;
 
 /**
  * Class ActionHookSubscription
