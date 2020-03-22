@@ -3,14 +3,14 @@
 namespace Jascha030\WPSI\Provider;
 
 /**
- * Interface ActionProvider
+ * Interface ShortcodeProvider
  *
  * @package Jascha030\WPSI\Provider
  */
-interface ActionProvider extends SubscriptionProvider
+interface ShortcodeProvider
 {
     /**
      * @return array
      */
-    public function getActions();
+    public function getShortcodes();
 }
