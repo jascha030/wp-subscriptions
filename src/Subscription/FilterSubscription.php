@@ -9,7 +9,7 @@ use Exception;
  *
  * @package Jascha030\WPSI\Subscription
  */
-class FilterSubscription extends HookSubscription
+class FilterSubscription extends HookableSubscription
 {
     /**
      * @return void

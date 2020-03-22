@@ -9,7 +9,7 @@ use Exception;
  *
  * @package Jascha030\WPSI\Subscription
  */
-class ActionHookSubscription extends HookSubscription
+class ActionSubscription extends HookableSubscription
 {
     /**
      * @return void

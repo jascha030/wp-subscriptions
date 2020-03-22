@@ -32,9 +32,6 @@ class FilterSubscriber extends Subscriber
         $this->filters[$key] = $method;
     }
 
-    /**
-     * @return array
-     */
     protected function createSubscriptions()
     {
         $filters = [];

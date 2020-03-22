@@ -9,9 +9,9 @@ namespace Jascha030\WPSI\Subscription;
  */
 trait Hookable
 {
-    private $tag;
+    protected $tag;
 
-    private $callable;
+    protected $callable;
 
     /**
      * Hookable constructor.

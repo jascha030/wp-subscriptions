@@ -9,11 +9,9 @@ use Exception;
  *
  * @package Jascha030\WPSI\Subscription
  */
-class HookSubscription extends Hookable implements Subscribable, Unsubscribable
+class HookableSubscription extends Subscription
 {
-    protected $tag;
-
-    protected $callable;
+    USE Hookable;
 
     protected $priority;
 

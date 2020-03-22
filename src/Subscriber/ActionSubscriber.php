@@ -2,7 +2,7 @@
 
 namespace Jascha030\WPSI\Subscriber;
 
-use Jascha030\WPSI\Subscription\ActionHookSubscription;
+use Jascha030\WPSI\Subscription\ActionHookableSubscription;
 
 /**
  * class ActionSubscriber
@@ -41,10 +41,10 @@ class ActionSubscriber extends Subscriber
         foreach ($this->getSubscriptions() as $hook => $parameters) {
             if (is_array($parameters) && is_array($parameters[0])) {
                 foreach ($parameters[0] as $actionParams) {
-                    $actions[] = new ActionHookSubscription($hook, $this, $actionParams);
+                    $actions[] = new ActionHookableSubscription($hook, $this, $actionParams);
                 }
             } else {
-                $actions[] = new ActionHookSubscription($hook, $this, $parameters);
+                $actions[] = new ActionHookableSubscription($hook, $this, $parameters);
             }
         }
 
