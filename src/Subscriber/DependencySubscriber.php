@@ -2,7 +2,7 @@
 
 namespace Jascha030\WPSI\Subscriber;
 
-use Jascha030\WPSI\Subscription\DependencySubscription;
+use Jascha030\WPSI\Subscription\ProviderSubscription;
 
 /**
  * Class DependencySubscriber
@@ -49,7 +49,7 @@ class DependencySubscriber extends Subscriber
             }
 
             if (is_subclass_of($className, Subscriber::class)) {
-                $dependencies[] = new DependencySubscription($className, $arguments);
+                $dependencies[] = new ProviderSubscription($className, $arguments);
             }
         }
     }

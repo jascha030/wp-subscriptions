@@ -11,28 +11,31 @@ use Jascha030\WPSI\Subscriber\Subscriber;
  *
  * @package Jascha030\WPSI\Subscription
  */
-class DependencySubscription implements Subscribable
+class ProviderSubscription extends Subscription
 {
     private $className;
 
     private $arguments = [];
 
+    private $object = [];
+
     /**
      * DependencySubscription constructor.
      *
-     * @param array $data
+     * @param $className
+     * @param null $arguments
      */
-    public function __construct(array $data)
+    public function __construct($className, $arguments = null)
     {
-        $this->create(...$data);
+        $this->className = $className;
+
+        $this->arguments = $arguments;
     }
 
-    /**
-     * @throws DoesNotImplementSubscriberException
-     * @throws InvalidClassException
-     */
     public function subscribe()
     {
+        parent::subscribe();
+
         $className = $this->className;
 
         if (! class_exists($className)) {
@@ -43,18 +46,10 @@ class DependencySubscription implements Subscribable
             throw new DoesNotImplementSubscriberException("Class: '{$className}' is not a valid Subscriber.");
         }
 
-        $class = new $className();
-        $class->register();
-    }
-
-    /**
-     * @param string $className
-     * @param array $arguments
-     */
-    private function create(string $className, $arguments = [])
-    {
-        $this->className = $className;
-
-        $this->arguments = $arguments;
+        if ($this->arguments) {
+            $this->object = new $className(...$this->arguments);
+        } else {
+            $this->object = new $className();
+        }
     }
 }
