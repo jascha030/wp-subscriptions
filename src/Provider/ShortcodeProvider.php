@@ -7,7 +7,7 @@ namespace Jascha030\WPSI\Provider;
  *
  * @package Jascha030\WPSI\Provider
  */
-interface ShortcodeProvider
+interface ShortcodeProvider extends SubscriptionProvider
 {
     /**
      * @return array

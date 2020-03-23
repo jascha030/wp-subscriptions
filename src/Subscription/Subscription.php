@@ -11,7 +11,14 @@ use Exception;
  */
 class Subscription implements Subscribable
 {
+    protected $uuid;
+
     protected $active = false;
+
+    public function __construct()
+    {
+        $this->uuid = uniqid();
+    }
 
     /**
      * @throws Exception
@@ -31,5 +38,13 @@ class Subscription implements Subscribable
     public function isActive(): bool
     {
         return $this->active;
+    }
+
+    /**
+     * @return string
+     */
+    public function getUuid(): string
+    {
+        return $this->uuid;
     }
 }
