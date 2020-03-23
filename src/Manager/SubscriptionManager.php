@@ -2,6 +2,7 @@
 
 namespace Jascha030\WPSI\Manager;
 
+use Closure;
 use Exception;
 use Jascha030\WPSI\Provider\ActionProvider;
 use Jascha030\WPSI\Provider\FilterProvider;
@@ -27,6 +28,14 @@ class SubscriptionManager
     private $subscriptions = [];
 
     private $failedSubscriptions = [];
+
+    /**
+     * SubscriptionManager constructor.
+     */
+    public function __construct()
+    {
+//        var_dump("created");
+    }
 
     public function run()
     {
