@@ -2,12 +2,49 @@
 
 namespace Jascha030\WPSI\Subscription;
 
+use Exception;
+
 /**
- * Interface Subscription
+ * Class Subscription
  *
  * @package Jascha030\WPSI\Subscription
  */
-interface Subscription
+class Subscription implements Subscribable
 {
-    public function subscribe();
+    protected $uuid;
+
+    protected $active = false;
+
+    public function __construct()
+    {
+        $this->uuid = uniqid();
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function subscribe()
+    {
+        if ($this->isActive()) {
+            throw new Exception("Already subscribed"); //Todo: Make exception class.
+        } else {
+            $this->active = true;
+        }
+    }
+
+    /**
+     * @return bool
+     */
+    public function isActive(): bool
+    {
+        return $this->active;
+    }
+
+    /**
+     * @return string
+     */
+    public function getUuid(): string
+    {
+        return $this->uuid;
+    }
 }
