@@ -1,5 +1,9 @@
 <?php
 
+namespace Jascha030\WPSI\Manager;
+
+use Closure;
+use Exception;
 use Jascha030\WPSI\Provider\ActionProvider;
 use Jascha030\WPSI\Provider\FilterProvider;
 use Jascha030\WPSI\Provider\ShortcodeProvider;
@@ -25,8 +29,18 @@ class SubscriptionManager
 
     private $failedSubscriptions = [];
 
+    /**
+     * SubscriptionManager constructor.
+     */
+    public function __construct()
+    {
+//        var_dump("created");
+    }
+
     public function run()
     {
+        $this->createSubscriptionsFromProviderData();
+
         foreach ($this->subscriptions as &$subscription) {
             try {
                 $subscription->subscribe();
@@ -51,9 +65,8 @@ class SubscriptionManager
      * @param string $type
      *
      * @return array
-     * @throws Exception
      */
-    private function createSubscriptions(SubscriptionProvider $provider, string $type)
+    private function createSubscriptions(SubscriptionProvider $provider, $type)
     {
         $data              = $this->getProvidedData($provider, $type);
         $subscriptionClass = self::AVAILABLE_TYPES[$type];
@@ -134,9 +147,7 @@ class SubscriptionManager
         return $data;
     }
 
-    /**
-     * @throws Exception
-     */
+
     private function createSubscriptionsFromProviderData()
     {
         foreach ($this->providers as $provider) {
