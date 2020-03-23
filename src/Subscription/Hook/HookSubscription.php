@@ -26,6 +26,8 @@ class HookSubscription extends Subscription
      */
     public function __construct($tag, $callable)
     {
+        parent::__construct();
+
         if (! is_callable($callable)) {
             throw new Exception("variable is not a valid callable");
         }
