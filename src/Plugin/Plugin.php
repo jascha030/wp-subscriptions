@@ -7,20 +7,22 @@ use Exception;
 use Jascha030\WPSI\Manager\SubscriptionManager;
 use Jascha030\WPSI\Provider\SubscriptionProvider;
 
-class WordpressPlugin
+class Plugin
 {
     public static $subscriptionManager = null;
 
-    protected $actions = [
-        "init"               => "init",
-        "wp_enqueue_scripts" => "addScripts"
-    ];
-
+    /**
+     * WordpressPlugin constructor.
+     */
     public function __construct()
     {
         $this->createSubscriptionManager();
     }
 
+    /**
+     * @return mixed
+     * @throws Exception
+     */
     public static function getSubscriptionManager()
     {
         if (self::$subscriptionManager instanceof Closure) {
@@ -30,6 +32,11 @@ class WordpressPlugin
         }
     }
 
+    /**
+     * @param SubscriptionProvider $provider
+     *
+     * @throws Exception
+     */
     public static function registerProvider(SubscriptionProvider $provider)
     {
         /** @var SubscriptionManager $manager */
@@ -54,6 +61,9 @@ class WordpressPlugin
         }
     }
 
+    /**
+     * @throws Exception
+     */
     protected function run() {
         $manager = self::getSubscriptionManager();
         $manager->run();

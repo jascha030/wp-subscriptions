@@ -2,8 +2,9 @@
 
 namespace Jascha030\WPSI\Provider;
 
+use Exception;
 use Jascha030\WPSI\Manager\SubscriptionManager;
-use Jascha030\WPSI\Plugin\WordpressPlugin;
+use Jascha030\WPSI\Plugin\Plugin;
 
 trait Provider
 {
@@ -15,32 +16,27 @@ trait Provider
 
     public function getFilters()
     {
-        return (in_array(FilterProvider::class, class_implements($this)) && property_exists($this, 'filters')) ?
-            $this->filters: false;
+        return (in_array(FilterProvider::class, class_implements($this)) && property_exists($this,
+                'filters')) ? $this->filters : false;
     }
 
     public function getShortcodes()
     {
-        return (in_array(ShortcodeProvider::class, class_implements($this)) && property_exists($this, 'shortcodes')) ?
-            $this->shortcodes: false;
+        return (in_array(ShortcodeProvider::class, class_implements($this)) && property_exists($this,
+                'shortcodes')) ? $this->shortcodes : false;
     }
 
+    /**
+     * @param SubscriptionManager|null $subscriptionManager
+     *
+     * @throws Exception
+     */
     final public function register(SubscriptionManager $subscriptionManager = null)
     {
-        if (in_array(SubscriptionProvider::class, class_implements($this))) {
-            if ($subscriptionManager) {
-                $subscriptionManager->register($this);
-            } else {
-                try {
-                    WordpressPlugin::registerProvider($this);
-                } catch (\Exception $e) {
-                    return false;
-                }
-            }
-
-            return true;
+        if ($subscriptionManager) {
+            $subscriptionManager->register($this);
+        } else {
+            Plugin::registerProvider($this);
         }
-
-        return false;
     }
 }
