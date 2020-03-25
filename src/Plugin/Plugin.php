@@ -24,10 +24,12 @@ class Plugin
      *
      * @param array $providers
      *
+     * @param bool $run
+     *
      * @throws DoesNotImplementProviderException
      * @throws InstanceNotAvailableException
      */
-    public function __construct($providers = [])
+    public function __construct($providers = [], $run = true)
     {
         $this->createSubscriptionManager();
 
@@ -41,6 +43,10 @@ class Plugin
             } else {
                 throw new DoesNotImplementProviderException();
             }
+        }
+
+        if ($run) {
+            $this->run();
         }
     }
 
