@@ -100,15 +100,15 @@ class SubscriptionManager
 
         if ($type === ActionProvider::class || $type === FilterProvider::class) {
             foreach ($data as $name => $parameters) {
-                if (is_array($parameters) && is_array($parameters[0])) {
-                    foreach ($parameters[0] as $actionParams) {
-                        $subscription                            = self::createSubscription($provider, $name,
-                            $actionParams, $subscriptionClass);
+                if (is_array($parameters) && is_array($parameters[0])) { // Multiple methods hooked to one tag
+                    foreach ($parameters as $actionParams) {
+                        $subscription = self::createSubscription($provider, $name, $actionParams, $subscriptionClass);
+
                         $subscriptions[$subscription->getUuid()] = $subscription;
                     }
                 } else {
-                    $subscription                            = self::createSubscription($provider, $name, $parameters,
-                        $subscriptionClass);
+                    $subscription = self::createSubscription($provider, $name, $parameters, $subscriptionClass);
+
                     $subscriptions[$subscription->getUuid()] = $subscription;
                 }
             }
