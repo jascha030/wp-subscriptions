@@ -39,11 +39,7 @@ class Plugin
         }
 
         foreach ($providers as $provider) {
-            if (in_array(SubscriptionProvider::class, class_implements($provider))) {
-                self::registerProvider($provider);
-            } else {
-                throw new DoesNotImplementProviderException();
-            }
+            self::registerProvider($provider);
         }
 
         if ($run) {
@@ -60,20 +56,23 @@ class Plugin
         if (self::$subscriptionManager instanceof Closure) {
             return call_user_func(self::$subscriptionManager);
         } else {
-            throw new InstanceNotAvailableException("no instance available");
+            throw new InstanceNotAvailableException("No SubscriptionManager instance available");
         }
     }
 
     /**
      * @param SubscriptionProvider $provider
      *
+     * @param bool $lazyLoad
+     *
+     * @throws DoesNotImplementProviderException
      * @throws InstanceNotAvailableException
      */
-    public static function registerProvider(SubscriptionProvider $provider)
+    public static function registerProvider($provider, $lazyLoad = true)
     {
         /** @var SubscriptionManager $manager */
         $manager = self::getSubscriptionManager();
-        $manager->register($provider);
+        $manager->register($provider, $lazyLoad);
     }
 
     /**

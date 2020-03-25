@@ -9,5 +9,4 @@ namespace Jascha030\WPSI\Provider;
  */
 interface SubscriptionProvider
 {
-    public function register();
 }
