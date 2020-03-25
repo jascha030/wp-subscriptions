@@ -3,6 +3,7 @@
 namespace Jascha030\WPSI\Plugin;
 
 use Closure;
+use Jascha030\WPSI\Exception\DoesNotImplementProviderException;
 use Jascha030\WPSI\Exception\InstanceNotAvailableException;
 use Jascha030\WPSI\Manager\SubscriptionManager;
 use Jascha030\WPSI\Provider\SubscriptionProvider;
@@ -16,12 +17,37 @@ class Plugin
 {
     public static $subscriptionManager = null;
 
+    private $providerDependencies = [];
+
     /**
      * WordpressPlugin constructor.
+     *
+     * @param array $providers
+     *
+     * @param bool $run
+     *
+     * @throws DoesNotImplementProviderException
+     * @throws InstanceNotAvailableException
      */
-    public function __construct()
+    public function __construct($providers = [], $run = true)
     {
         $this->createSubscriptionManager();
+
+        if (! empty($this->providerDependencies)) {
+            $providers = array_merge($this->providerDependencies, $providers);
+        }
+
+        foreach ($providers as $provider) {
+            if (in_array(SubscriptionProvider::class, class_implements($provider))) {
+                self::registerProvider($provider);
+            } else {
+                throw new DoesNotImplementProviderException();
+            }
+        }
+
+        if ($run) {
+            $this->run();
+        }
     }
 
     /**

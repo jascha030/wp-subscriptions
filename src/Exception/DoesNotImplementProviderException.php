@@ -7,6 +7,6 @@ namespace Jascha030\WPSI\Exception;
  *
  * @package Jascha030\WPSI\Exception
  */
-class DoesNotImplementSubscriberException extends InvalidClassException
+class DoesNotImplementProviderException extends InvalidClassException
 {
 }
