@@ -52,6 +52,40 @@ class SubscriptionManager
     }
 
     /**
+     * @param int $type
+     *
+     * @return array
+     */
+    public function getList($type = ItemTypes::PROVIDERS)
+    {
+        $data = [];
+        $list = [];
+
+        switch ($type) {
+            case ItemTypes::PROVIDERS:
+                $data = $this->providers;
+                break;
+
+            case ItemTypes::SUBSCRIPTIONS:
+                $data = $this->subscriptions;
+                break;
+
+            case ItemTypes::FAILED_SUBSCRIPTIONS:
+                $data = $this->failedSubscriptions;
+                break;
+        }
+
+        foreach ($data as $key => $item) {
+            if (is_object($item)) {
+                $item = get_class($item);
+            }
+            $list[$key] = (is_object($item)) ? get_class($item) : $item;
+        }
+
+        return $list;
+    }
+
+    /**
      * @param SubscriptionProvider $provider
      * @param string $type
      *
