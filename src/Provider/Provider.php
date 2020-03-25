@@ -2,9 +2,8 @@
 
 namespace Jascha030\WPSI\Provider;
 
-use Jascha030\WPSI\Exception\InstanceNotAvailableException;
-use Jascha030\WPSI\Manager\SubscriptionManager;
-use Jascha030\WPSI\Plugin\Plugin;
+use Jascha030\WPSI\Provider\StaticProvider\StaticActionProvider;
+use Jascha030\WPSI\Provider\StaticProvider\StaticFilterProvider;
 
 /**
  * Trait Provider
@@ -41,16 +40,24 @@ trait Provider
     }
 
     /**
-     * @param SubscriptionManager|null $subscriptionManager
-     *
-     * @throws InstanceNotAvailableException
+     * @return array|bool
      */
-    final public function register(SubscriptionManager $subscriptionManager = null)
+    public static function getStaticActions()
     {
-        if ($subscriptionManager) {
-            $subscriptionManager->register($this);
-        } else {
-            Plugin::registerProvider($this);
-        }
+        $class = get_called_class();
+
+        return (in_array(StaticActionProvider::class, class_implements($class)) && property_exists($class,
+                'actions')) ? $class::$actions : false;
+    }
+
+    /**
+     * @return array|bool
+     */
+    public static function getStaticFilters()
+    {
+        $class = get_called_class();
+
+        return (in_array(StaticFilterProvider::class, class_implements($class)) && property_exists($class,
+                'actions')) ? $class::$filters : false;
     }
 }
