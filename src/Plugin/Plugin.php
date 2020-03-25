@@ -18,7 +18,7 @@ class Plugin
 {
     public static $subscriptionManager = null;
 
-    private $providerDependencies = [];
+    protected $providerDependencies = [];
 
     /**
      * WordpressPlugin constructor.
