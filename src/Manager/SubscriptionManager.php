@@ -100,7 +100,8 @@ class SubscriptionManager
 
         if ($type === ActionProvider::class || $type === FilterProvider::class) {
             foreach ($data as $name => $parameters) {
-                if (is_array($parameters) && is_array($parameters[0])) { // Multiple methods hooked to one tag
+                if (is_array($parameters) && ! is_int($parameters[1])) { // Multiple methods hooked
+                    // to one tag
                     foreach ($parameters as $actionParams) {
                         $subscription = self::createSubscription($provider, $name, $actionParams, $subscriptionClass);
 
@@ -113,9 +114,10 @@ class SubscriptionManager
                 }
             }
         } elseif ($type === ShortcodeProvider::class) {
-            foreach ($data as $shortcodeData) {
+            foreach ($data as $shortCodeData) {
                 /** @var ShortcodeSubscription $subscription */
-                $subscription                            = new $subscriptionClass($shortcodeData[0], $shortcodeData[1]);
+                $subscription = new $subscriptionClass($shortCodeData[0], $shortCodeData[1]);
+
                 $subscriptions[$subscription->getUuid()] = $subscription;
             }
         }
