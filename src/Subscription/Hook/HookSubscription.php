@@ -2,7 +2,8 @@
 
 namespace Jascha030\WPSI\Subscription\Hook;
 
-use Exception;
+use Jascha030\WPSI\Exception\InvalidArgumentException;
+use Jascha030\WPSI\Exception\NotCallableException;
 use Jascha030\WPSI\Subscription\Subscription;
 
 /**
@@ -22,14 +23,14 @@ class HookSubscription extends Subscription
      * @param $tag
      * @param $callable
      *
-     * @throws Exception
+     * @throws InvalidArgumentException
      */
     public function __construct($tag, $callable)
     {
         parent::__construct();
 
         if (! is_callable($callable)) {
-            throw new Exception("variable is not a valid callable");
+            throw new InvalidArgumentException("variable is not a valid callable");
         }
 
         $this->tag = $tag;
@@ -37,12 +38,15 @@ class HookSubscription extends Subscription
         $this->callable = $callable;
     }
 
+    /**
+     * @throws NotCallableException
+     */
     public function subscribe()
     {
         if (! is_callable($this->callable) && ! function_exists($this->callable)) {
-            throw new Exception("Invalid callable"); //Todo: create Exception.
+            throw new NotCallableException("Invalid callable");
         }
-        
+
         parent::subscribe();
     }
 }

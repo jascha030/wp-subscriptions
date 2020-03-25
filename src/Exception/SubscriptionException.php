@@ -5,8 +5,10 @@ namespace Jascha030\WPSI\Exception;
 use Exception;
 
 /**
- * Class SubscriptionError
+ * Class SubscriptionException
  *
  * @package Jascha030\WPSI\Exception
  */
-class SubscriptionError extends Exception {}
+class SubscriptionException extends Exception
+{
+}

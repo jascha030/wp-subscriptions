@@ -2,7 +2,7 @@
 
 namespace Jascha030\WPSI\Subscription;
 
-use Exception;
+use Jascha030\WPSI\Exception\SubscriptionException;
 
 /**
  * Class Subscription
@@ -21,12 +21,12 @@ class Subscription implements Subscribable
     }
 
     /**
-     * @throws Exception
+     * @throws SubscriptionException
      */
     public function subscribe()
     {
         if ($this->isActive()) {
-            throw new Exception("Already subscribed"); //Todo: Make exception class.
+            throw new SubscriptionException("Already subscribed");
         } else {
             $this->active = true;
         }

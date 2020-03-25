@@ -3,10 +3,15 @@
 namespace Jascha030\WPSI\Plugin;
 
 use Closure;
-use Exception;
+use Jascha030\WPSI\Exception\InstanceNotAvailableException;
 use Jascha030\WPSI\Manager\SubscriptionManager;
 use Jascha030\WPSI\Provider\SubscriptionProvider;
 
+/**
+ * Class Plugin
+ *
+ * @package Jascha030\WPSI\Plugin
+ */
 class Plugin
 {
     public static $subscriptionManager = null;
@@ -21,27 +26,36 @@ class Plugin
 
     /**
      * @return mixed
-     * @throws Exception
+     * @throws InstanceNotAvailableException
      */
     public static function getSubscriptionManager()
     {
         if (self::$subscriptionManager instanceof Closure) {
             return call_user_func(self::$subscriptionManager);
         } else {
-            throw new Exception("no instance available");
+            throw new InstanceNotAvailableException("no instance available");
         }
     }
 
     /**
      * @param SubscriptionProvider $provider
      *
-     * @throws Exception
+     * @throws InstanceNotAvailableException
      */
     public static function registerProvider(SubscriptionProvider $provider)
     {
         /** @var SubscriptionManager $manager */
         $manager = self::getSubscriptionManager();
         $manager->register($provider);
+    }
+
+    /**
+     * @throws InstanceNotAvailableException
+     */
+    protected function run()
+    {
+        $manager = self::getSubscriptionManager();
+        $manager->run();
     }
 
     private function createSubscriptionManager()
@@ -59,13 +73,5 @@ class Plugin
                 return $_instance;
             };
         }
-    }
-
-    /**
-     * @throws Exception
-     */
-    protected function run() {
-        $manager = self::getSubscriptionManager();
-        $manager->run();
     }
 }

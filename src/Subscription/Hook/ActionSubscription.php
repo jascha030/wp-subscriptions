@@ -2,7 +2,9 @@
 
 namespace Jascha030\WPSI\Subscription\Hook;
 
-use Exception;
+use Jascha030\WPSI\Exception\InvalidArgumentException;
+use Jascha030\WPSI\Exception\NotCallableException;
+use Jascha030\WPSI\Exception\SubscriptionException;
 use Jascha030\WPSI\Subscription\Unsubscribable;
 
 /**
@@ -24,7 +26,7 @@ class ActionSubscription extends HookSubscription implements Unsubscribable
      * @param int $priority
      * @param int $acceptedArguments
      *
-     * @throws Exception
+     * @throws InvalidArgumentException
      */
     public function __construct($tag, $callable, $priority = 10, $acceptedArguments = 1)
     {
@@ -36,8 +38,7 @@ class ActionSubscription extends HookSubscription implements Unsubscribable
     }
 
     /**
-     * @return void
-     * @throws Exception
+     * @throws NotCallableException
      */
     public function subscribe()
     {
@@ -47,13 +48,12 @@ class ActionSubscription extends HookSubscription implements Unsubscribable
     }
 
     /**
-     * @return void
-     * @throws Exception
+     * @throws SubscriptionException
      */
     public function unsubscribe()
     {
         if ($this->isActive()) {
-            throw new Exception("Can't unsubscribe before subscribing"); //Todo: make exception class.
+            throw new SubscriptionException("Can't unsubscribe before subscribing");
         } else {
             remove_action($this->tag, $this->callable, $this->priority, $this->acceptedArguments);
             $this->active = false;

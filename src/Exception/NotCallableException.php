@@ -2,7 +2,13 @@
 
 namespace Jascha030\WPSI\Exception;
 
-class NotCallableException
-{
+use Exception;
 
+/**
+ * Class NotCallableException
+ *
+ * @package Jascha030\WPSI\Exception
+ */
+class NotCallableException extends Exception
+{
 }

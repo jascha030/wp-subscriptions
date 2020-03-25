@@ -2,7 +2,7 @@
 
 namespace Jascha030\WPSI\Subscription\Hook;
 
-use Exception;
+use Jascha030\WPSI\Exception\NotCallableException;
 
 /**
  * Class ShortcodeSubscription
@@ -12,8 +12,7 @@ use Exception;
 class ShortcodeSubscription extends HookSubscription
 {
     /**
-     * @return void
-     * @throws Exception
+     * @throws NotCallableException
      */
     public function subscribe()
     {

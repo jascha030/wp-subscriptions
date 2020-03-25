@@ -2,8 +2,6 @@
 
 namespace Jascha030\WPSI\Subscription\Provider;
 
-use Jascha030\WPSI\Exception\DoesNotImplementSubscriberException;
-use Jascha030\WPSI\Exception\InvalidClassException;
 use Jascha030\WPSI\Subscription\Subscription;
 
 /**
