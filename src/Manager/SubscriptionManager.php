@@ -52,6 +52,40 @@ class SubscriptionManager
     }
 
     /**
+     * @param int $type
+     *
+     * @return array
+     */
+    public function getList($type = ItemTypes::PROVIDERS)
+    {
+        $data = [];
+        $list = [];
+
+        switch ($type) {
+            case ItemTypes::PROVIDERS:
+                $data = $this->providers;
+                break;
+
+            case ItemTypes::SUBSCRIPTIONS:
+                $data = $this->subscriptions;
+                break;
+
+            case ItemTypes::FAILED_SUBSCRIPTIONS:
+                $data = $this->failedSubscriptions;
+                break;
+        }
+
+        foreach ($data as $key => $item) {
+            if (is_object($item)) {
+                $item = get_class($item);
+            }
+            $list[$key] = (is_object($item)) ? get_class($item) : $item;
+        }
+
+        return $list;
+    }
+
+    /**
      * @param SubscriptionProvider $provider
      * @param string $type
      *
@@ -66,22 +100,24 @@ class SubscriptionManager
 
         if ($type === ActionProvider::class || $type === FilterProvider::class) {
             foreach ($data as $name => $parameters) {
-                if (is_array($parameters) && is_array($parameters[0])) {
-                    foreach ($parameters[0] as $actionParams) {
-                        $subscription                            = self::createSubscription($provider, $name,
-                            $actionParams, $subscriptionClass);
+                if (is_array($parameters) && ! is_int($parameters[1])) { // Multiple methods hooked
+                    // to one tag
+                    foreach ($parameters as $actionParams) {
+                        $subscription = self::createSubscription($provider, $name, $actionParams, $subscriptionClass);
+
                         $subscriptions[$subscription->getUuid()] = $subscription;
                     }
                 } else {
-                    $subscription                            = self::createSubscription($provider, $name, $parameters,
-                        $subscriptionClass);
+                    $subscription = self::createSubscription($provider, $name, $parameters, $subscriptionClass);
+
                     $subscriptions[$subscription->getUuid()] = $subscription;
                 }
             }
         } elseif ($type === ShortcodeProvider::class) {
-            foreach ($data as $shortcodeData) {
+            foreach ($data as $shortCodeData) {
                 /** @var ShortcodeSubscription $subscription */
-                $subscription                            = new $subscriptionClass($shortcodeData[0], $shortcodeData[1]);
+                $subscription = new $subscriptionClass($shortCodeData[0], $shortCodeData[1]);
+
                 $subscriptions[$subscription->getUuid()] = $subscription;
             }
         }

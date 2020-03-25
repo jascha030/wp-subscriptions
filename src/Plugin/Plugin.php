@@ -5,6 +5,7 @@ namespace Jascha030\WPSI\Plugin;
 use Closure;
 use Jascha030\WPSI\Exception\DoesNotImplementProviderException;
 use Jascha030\WPSI\Exception\InstanceNotAvailableException;
+use Jascha030\WPSI\Manager\ItemTypes;
 use Jascha030\WPSI\Manager\SubscriptionManager;
 use Jascha030\WPSI\Provider\SubscriptionProvider;
 
@@ -17,7 +18,7 @@ class Plugin
 {
     public static $subscriptionManager = null;
 
-    private $providerDependencies = [];
+    protected $providerDependencies = [];
 
     /**
      * WordpressPlugin constructor.
@@ -73,6 +74,36 @@ class Plugin
         /** @var SubscriptionManager $manager */
         $manager = self::getSubscriptionManager();
         $manager->register($provider);
+    }
+
+    /**
+     * @return mixed
+     * @throws InstanceNotAvailableException
+     */
+    public static function listProviders()
+    {
+        $manager = self::getSubscriptionManager();
+        return $manager->getList(ItemTypes::PROVIDERS);
+    }
+
+    /**
+     * @return mixed
+     * @throws InstanceNotAvailableException
+     */
+    public static function listSubscriptions()
+    {
+        $manager = self::getSubscriptionManager();
+        return $manager->getList(ItemTypes::SUBSCRIPTIONS);
+    }
+
+    /**
+     * @return mixed
+     * @throws InstanceNotAvailableException
+     */
+    public static function listFailedSubscriptions()
+    {
+        $manager = self::getSubscriptionManager();
+        return $manager->getList(ItemTypes::FAILED_SUBSCRIPTIONS);
     }
 
     /**
