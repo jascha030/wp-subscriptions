@@ -1,12 +1,10 @@
 <?php
 
-namespace Jascha030\WPSI\Plugin;
+namespace Jascha030\WPSI\Subscription\Manager;
 
 use Closure;
 use Jascha030\WPSI\Exception\DoesNotImplementProviderException;
 use Jascha030\WPSI\Exception\InstanceNotAvailableException;
-use Jascha030\WPSI\Subscription\Manager\ItemTypes;
-use Jascha030\WPSI\Subscription\Manager\SubscriptionManager;
 use Jascha030\WPSI\Subscription\Provider\SubscriptionProvider;
 
 /**
@@ -14,7 +12,7 @@ use Jascha030\WPSI\Subscription\Provider\SubscriptionProvider;
  *
  * @package Jascha030\WPSI\Plugin
  */
-class Plugin
+class PluginAPI
 {
     public static $subscriptionManager = null;
 
