@@ -5,7 +5,7 @@ namespace Jascha030\WPSI\Subscription\Provider;
 /**
  * Interface FilterProvider
  *
- * @package Jascha030\WPSI\Provider
+ * @package Jascha030\WPSI\Subscription\Provider
  */
 interface FilterProvider extends SubscriptionProvider
 {

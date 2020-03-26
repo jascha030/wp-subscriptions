@@ -5,7 +5,7 @@ namespace Jascha030\WPSI\Subscription\Provider;
 /**
  * Trait Provider
  *
- * @package Jascha030\WPSI\Provider
+ * @package Jascha030\WPSI\Subscription\Provider
  */
 trait Provider
 {

@@ -1,7 +1,12 @@
 <?php
 
-namespace Jascha030\WPSI\Manager;
+namespace Jascha030\WPSI\Subscription\Manager;
 
+/**
+ * Class ItemTypes
+ *
+ * @package Jascha030\WPSI\Subscription\Manager
+ */
 class ItemTypes
 {
     const PROVIDERS = 0;

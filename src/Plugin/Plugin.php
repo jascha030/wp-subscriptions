@@ -5,9 +5,9 @@ namespace Jascha030\WPSI\Plugin;
 use Closure;
 use Jascha030\WPSI\Exception\DoesNotImplementProviderException;
 use Jascha030\WPSI\Exception\InstanceNotAvailableException;
-use Jascha030\WPSI\Manager\ItemTypes;
-use Jascha030\WPSI\Manager\SubscriptionManager;
-use Jascha030\WPSI\Provider\SubscriptionProvider;
+use Jascha030\WPSI\Subscription\Manager\ItemTypes;
+use Jascha030\WPSI\Subscription\Manager\SubscriptionManager;
+use Jascha030\WPSI\Subscription\Provider\SubscriptionProvider;
 
 /**
  * Class Plugin
