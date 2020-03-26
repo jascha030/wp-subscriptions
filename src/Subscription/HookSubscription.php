@@ -1,10 +1,9 @@
 <?php
 
-namespace Jascha030\WPSI\Subscription\Hook;
+namespace Jascha030\WPSI\Subscription;
 
 use Jascha030\WPSI\Exception\InvalidArgumentException;
 use Jascha030\WPSI\Exception\NotCallableException;
-use Jascha030\WPSI\Subscription\Subscription;
 
 /**
  * Class HookSubscription

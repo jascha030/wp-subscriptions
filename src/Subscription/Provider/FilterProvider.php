@@ -1,6 +1,6 @@
 <?php
 
-namespace Jascha030\WPSI\Provider;
+namespace Jascha030\WPSI\Subscription\Provider;
 
 /**
  * Interface FilterProvider

@@ -2,16 +2,15 @@
 
 namespace Jascha030\WPSI\Manager;
 
-use Closure;
 use Exception;
 use Jascha030\WPSI\Exception\DoesNotImplementProviderException;
 use Jascha030\WPSI\Provider\ActionProvider;
 use Jascha030\WPSI\Provider\FilterProvider;
 use Jascha030\WPSI\Provider\ShortcodeProvider;
 use Jascha030\WPSI\Provider\SubscriptionProvider;
-use Jascha030\WPSI\Subscription\Hook\ActionSubscription;
-use Jascha030\WPSI\Subscription\Hook\FilterSubscription;
-use Jascha030\WPSI\Subscription\Hook\ShortcodeSubscription;
+use Jascha030\WPSI\Subscription\ActionSubscription;
+use Jascha030\WPSI\Subscription\FilterSubscription;
+use Jascha030\WPSI\Subscription\ShortcodeSubscription;
 use ReflectionException;
 use ReflectionMethod;
 
