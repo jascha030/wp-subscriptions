@@ -23,20 +23,30 @@ class PluginAPI
      *
      * @param array $providers
      *
+     * @param bool $create
+     *
+     * @throws DoesNotImplementProviderException
+     * @throws InstanceNotAvailableException
+     */
+    public function __construct($providers = [], $create = true)
+    {
+        $this->createSubscriptionManager();
+
+        $this->providerDependencies = $providers;
+
+        if ($create) {
+            $this->create();
+        }
+    }
+
+    /**
      * @param bool $run
      *
      * @throws DoesNotImplementProviderException
      * @throws InstanceNotAvailableException
      */
-    public function __construct($providers = [], $run = true)
-    {
-        $this->createSubscriptionManager();
-
-        if (! empty($this->providerDependencies)) {
-            $providers = array_merge($this->providerDependencies, $providers);
-        }
-
-        foreach ($providers as $provider) {
+    protected function create($run = true) {
+        foreach ($this->providerDependencies as $provider) {
             self::registerProvider($provider);
         }
 
