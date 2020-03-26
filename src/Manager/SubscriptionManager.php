@@ -8,8 +8,6 @@ use Jascha030\WPSI\Exception\DoesNotImplementProviderException;
 use Jascha030\WPSI\Provider\ActionProvider;
 use Jascha030\WPSI\Provider\FilterProvider;
 use Jascha030\WPSI\Provider\ShortcodeProvider;
-use Jascha030\WPSI\Provider\StaticProvider\StaticActionProvider;
-use Jascha030\WPSI\Provider\StaticProvider\StaticFilterProvider;
 use Jascha030\WPSI\Provider\SubscriptionProvider;
 use Jascha030\WPSI\Subscription\Hook\ActionSubscription;
 use Jascha030\WPSI\Subscription\Hook\FilterSubscription;
@@ -24,9 +22,7 @@ class SubscriptionManager
 {
     const AVAILABLE_TYPES = [
         ActionProvider::class       => ActionSubscription::class,
-        StaticActionProvider::class => ActionSubscription::class,
         FilterProvider::class       => FilterSubscription::class,
-        StaticFilterProvider::class => FilterSubscription::class,
         ShortcodeProvider::class    => ShortcodeSubscription::class
     ];
 
@@ -204,14 +200,6 @@ class SubscriptionManager
 
             case ShortcodeProvider::class:
                 $data = $provider->getShortcodes();
-                break;
-
-            case StaticActionProvider::class:
-                $data = $provider::getStaticActions();
-                break;
-
-            case StaticFilterProvider::class:
-                $data = $provider::getStaticFilters();
                 break;
         }
 

@@ -12,5 +12,5 @@ interface FilterProvider extends SubscriptionProvider
     /**
      * @return array
      */
-    public function getFilters();
+    public static function getFilters();
 }

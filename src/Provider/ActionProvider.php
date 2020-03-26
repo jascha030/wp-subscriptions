@@ -12,5 +12,5 @@ interface ActionProvider extends SubscriptionProvider
     /**
      * @return array
      */
-    public function getActions();
+    public static function getActions();
 }

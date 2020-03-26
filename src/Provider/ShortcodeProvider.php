@@ -12,5 +12,5 @@ interface ShortcodeProvider extends SubscriptionProvider
     /**
      * @return array
      */
-    public function getShortcodes();
+    public static function getShortcodes();
 }
