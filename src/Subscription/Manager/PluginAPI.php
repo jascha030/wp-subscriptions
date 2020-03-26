@@ -30,9 +30,9 @@ class PluginAPI
      */
     public function __construct($providers = [], $create = true)
     {
-        $this->createSubscriptionManager();
-
         $this->providerDependencies = $providers;
+
+        $this->createSubscriptionManager();
 
         if ($create) {
             $this->create();

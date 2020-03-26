@@ -2,7 +2,6 @@
 
 namespace Jascha030\WPSI\Service\Container;
 
-use Closure;
 use Exception;
 
 /**
@@ -21,9 +20,21 @@ class ServiceContainer
      */
     public function __construct($services = [])
     {
-        $this->services = $services;
+        foreach ($services as $service) {
+            if (class_exists($service)) {
+                $this[$service] = function () use ($service) {
+                    static $_service;
 
-        $this->generateServiceClosures();
+                    if (null !== $_service) {
+                        return $_service;
+                    }
+
+                    $_service = (is_string($service)) ? new $service() : $service;
+
+                    return $_service;
+                };
+            }
+        }
     }
 
     /**
@@ -35,7 +46,7 @@ class ServiceContainer
     public function get($key)
     {
         if ($this->has($key)) {
-            throw new Exception("Service not loaded");
+            throw new Exception("Service does not exist or is not loaded in plugin");
         }
 
         return call_user_func($this->services[$key]);
@@ -49,28 +60,5 @@ class ServiceContainer
     public function has($key)
     {
         return (array_key_exists($key, $this->services));
-    }
-
-    protected function generateServiceClosures()
-    {
-        foreach ($this->services as $property => $service) {
-            if ($service instanceof Closure) {
-                continue;
-            }
-
-            if (class_exists($service)) {
-                $this->services[$property] = function () use ($service) {
-                    static $_service;
-
-                    if (null !== $_service) {
-                        return $_service;
-                    }
-
-                    $_service = (is_string($service)) ? new $service() : $service;
-
-                    return $_service;
-                };
-            }
-        }
     }
 }

@@ -4,6 +4,7 @@ namespace Jascha030\WPSI\Plugin;
 
 use Jascha030\WPSI\Exception\DoesNotImplementProviderException;
 use Jascha030\WPSI\Exception\InstanceNotAvailableException;
+use Jascha030\WPSI\Service\Container\ServiceContainer;
 use Jascha030\WPSI\Subscription\Manager\PluginAPI;
 
 /**
@@ -13,7 +14,7 @@ use Jascha030\WPSI\Subscription\Manager\PluginAPI;
  */
 class Plugin extends PluginAPI
 {
-    protected $serviceDependencies = [];
+    public static $serviceContainer = null;
 
     /**
      * WordpressPlugin constructor.
@@ -28,7 +29,7 @@ class Plugin extends PluginAPI
     {
         parent::__construct($providers, false);
 
-        $this->serviceDependencies = $services;
+        $this::$serviceContainer = new ServiceContainer($services);
 
         add_action('init', [$this, 'create']);
     }
