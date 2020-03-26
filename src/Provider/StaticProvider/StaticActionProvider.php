@@ -2,10 +2,12 @@
 
 namespace Jascha030\WPSI\Provider\StaticProvider;
 
+use Jascha030\WPSI\Provider\SubscriptionProvider;
+
 /**
  * Interface StaticActionProvider
  */
-interface StaticActionProvider extends StaticSubscriptionProvider
+interface StaticActionProvider extends SubscriptionProvider
 {
     /**
      * @return mixed

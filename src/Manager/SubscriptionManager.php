@@ -36,6 +36,9 @@ class SubscriptionManager
 
     private $failedSubscriptions = [];
 
+    /**
+     * @throws ReflectionException
+     */
     public function run()
     {
         $this->createSubscriptionsFromProviderData();
@@ -51,21 +54,17 @@ class SubscriptionManager
 
     /**
      * @param SubscriptionProvider|string $provider
-     * @param bool $lazyLoad
      *
      * @throws DoesNotImplementProviderException
      */
-    public function register($provider, $lazyLoad = true)
+    public function register($provider)
     {
-        if (is_object($provider) && $provider instanceof SubscriptionProvider) {
-            $this->registerProvider($provider);
-        } elseif (is_string($provider) && in_array(SubscriptionProvider::class, class_implements($provider))) {
-            if (! $lazyLoad) {
-                $this->registerProvider(new $provider());
+        if (! in_array($provider, $this->providers)) {
+            if(in_array(SubscriptionProvider::class, class_implements($provider))) {
+                $this->providers[(is_string($provider)) ? $provider : get_class($provider)] = $provider;
+            } else {
+                throw new DoesNotImplementProviderException();
             }
-            $this->registerStaticProvider($provider);
-        } else {
-            throw new DoesNotImplementProviderException();
         }
     }
 
@@ -101,56 +100,6 @@ class SubscriptionManager
         }
 
         return $list;
-    }
-
-    /**
-     * @param $name
-     * @param $arguments
-     *
-     * @return void|Closure
-     */
-    public function __call($name, $arguments)
-    {
-        // Overkill super lazy loader 3000
-        if (substr($name, 0, 14) === "providerMethod") {
-            $args = explode('__', substr($name, 13));
-
-            return function () use ($args) {
-                $provider = call_user_func($this->providers[$args[0]]);
-
-                return call_user_func([$provider, $args[1]]);
-            };
-        }
-    }
-
-    /**
-     * @param SubscriptionProvider $provider
-     */
-    private function registerProvider(SubscriptionProvider $provider)
-    {
-        if (! in_array($provider, $this->providers)) {
-            $this->providers[get_class($provider)] = $provider;
-        }
-    }
-
-    /**
-     * @param string $provider
-     */
-    private function registerStaticProvider(string $provider)
-    {
-        if (! array_key_exists($provider, $this->providers)) {
-            $this->providers[$provider] = function () use ($provider) {
-                static $_provider;
-
-                if ($_provider !== null) {
-                    return $_provider;
-                }
-
-                $_provider = new $provider();
-
-                return $_provider;
-            };
-        }
     }
 
     /**
@@ -208,19 +157,28 @@ class SubscriptionManager
     private function createHookSubscription($provider, $tag, $parameters, $type)
     {
         $methodToCall = (is_array($parameters)) ? $parameters[0] : $parameters;
+        $callable          = [$provider, $methodToCall];
 
         if (is_string($provider)) {
             $reflectionMethod = new ReflectionMethod($provider, $methodToCall);
 
-            if (! $reflectionMethod->isStatic()) { // Okay this is overkill I know... but I was bored.
-                $methodToCall = "providerMethod{$provider}__{$methodToCall}";
-                $provider     = $this;
+            if (! $reflectionMethod->isStatic()) {
+                $callable = function (...$params) use ($provider, $methodToCall) {
+                    static $_instance;
+
+                    if ($_instance !== null) {
+                        return call_user_func([$_instance, $methodToCall], ...$params);
+                    }
+
+                    $_instance = new $provider();
+
+                    return $_instance;
+                };
             }
         }
 
-        $callable          = [$provider, $methodToCall];
-        $priority          = (is_array($parameters) && isset($parameters[1])) ? $parameters[1] : 10;
-        $acceptedArguments = (is_array($parameters) && isset($parameters[2])) ? $parameters[2] : 1;
+        $priority          = (is_array($parameters)) ? $parameters[1] ?? 10 : 10;
+        $acceptedArguments = (is_array($parameters)) ? $parameters[2] ?? 1 : 1;
 
         return new $type($tag, $callable, $priority, $acceptedArguments);
     }
@@ -260,13 +218,12 @@ class SubscriptionManager
         return $data;
     }
 
+    /**
+     * @throws ReflectionException
+     */
     private function createSubscriptionsFromProviderData()
     {
         foreach ($this->providers as $className => $provider) {
-            if ($provider instanceof Closure) {
-                $provider = $className;
-            }
-
             $implements = class_implements($provider);
 
             foreach (self::AVAILABLE_TYPES as $type => $subscriberName) {

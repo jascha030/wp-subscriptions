@@ -63,16 +63,14 @@ class Plugin
     /**
      * @param SubscriptionProvider $provider
      *
-     * @param bool $lazyLoad
-     *
      * @throws DoesNotImplementProviderException
      * @throws InstanceNotAvailableException
      */
-    public static function registerProvider($provider, $lazyLoad = true)
+    public static function registerProvider($provider)
     {
         /** @var SubscriptionManager $manager */
         $manager = self::getSubscriptionManager();
-        $manager->register($provider, $lazyLoad);
+        $manager->register($provider);
     }
 
     /**
