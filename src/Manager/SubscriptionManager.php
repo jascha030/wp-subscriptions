@@ -3,13 +3,13 @@
 namespace Jascha030\WPOL\Subscription\Manager;
 
 use Exception;
+use Jascha030\WPOL\Subscription\ActionSubscription;
 use Jascha030\WPOL\Subscription\Exception\DoesNotImplementProviderException;
+use Jascha030\WPOL\Subscription\FilterSubscription;
 use Jascha030\WPOL\Subscription\Provider\ActionProvider;
 use Jascha030\WPOL\Subscription\Provider\FilterProvider;
 use Jascha030\WPOL\Subscription\Provider\ShortcodeProvider;
 use Jascha030\WPOL\Subscription\Provider\SubscriptionProvider;
-use Jascha030\WPOL\Subscription\ActionSubscription;
-use Jascha030\WPOL\Subscription\FilterSubscription;
 use Jascha030\WPOL\Subscription\ShortcodeSubscription;
 use ReflectionException;
 use ReflectionMethod;
@@ -20,9 +20,9 @@ use ReflectionMethod;
 class SubscriptionManager
 {
     const AVAILABLE_TYPES = [
-        ActionProvider::class       => ActionSubscription::class,
-        FilterProvider::class       => FilterSubscription::class,
-        ShortcodeProvider::class    => ShortcodeSubscription::class
+        ActionProvider::class    => ActionSubscription::class,
+        FilterProvider::class    => FilterSubscription::class,
+        ShortcodeProvider::class => ShortcodeSubscription::class
     ];
 
     private $providers = [];
@@ -55,7 +55,7 @@ class SubscriptionManager
     public function register($provider)
     {
         if (! in_array($provider, $this->providers)) {
-            if(in_array(SubscriptionProvider::class, class_implements($provider))) {
+            if (in_array(SubscriptionProvider::class, class_implements($provider))) {
                 $this->providers[(is_string($provider)) ? $provider : get_class($provider)] = $provider;
             } else {
                 throw new DoesNotImplementProviderException();
@@ -152,7 +152,7 @@ class SubscriptionManager
     private function createHookSubscription($provider, $tag, $parameters, $type)
     {
         $methodToCall = (is_array($parameters)) ? $parameters[0] : $parameters;
-        $callable          = [$provider, $methodToCall];
+        $callable     = [$provider, $methodToCall];
 
         if (is_string($provider)) {
             $reflectionMethod = new ReflectionMethod($provider, $methodToCall);
