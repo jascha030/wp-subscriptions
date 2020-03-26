@@ -40,22 +40,6 @@ class PluginAPI
     }
 
     /**
-     * @param bool $run
-     *
-     * @throws DoesNotImplementProviderException
-     * @throws InstanceNotAvailableException
-     */
-    protected function create($run = true) {
-        foreach ($this->providerDependencies as $provider) {
-            self::registerProvider($provider);
-        }
-
-        if ($run) {
-            $this->run();
-        }
-    }
-
-    /**
      * @return mixed
      * @throws InstanceNotAvailableException
      */
@@ -88,6 +72,7 @@ class PluginAPI
     public static function listProviders()
     {
         $manager = self::getSubscriptionManager();
+
         return $manager->getList(ItemTypes::PROVIDERS);
     }
 
@@ -98,6 +83,7 @@ class PluginAPI
     public static function listSubscriptions()
     {
         $manager = self::getSubscriptionManager();
+
         return $manager->getList(ItemTypes::SUBSCRIPTIONS);
     }
 
@@ -108,7 +94,25 @@ class PluginAPI
     public static function listFailedSubscriptions()
     {
         $manager = self::getSubscriptionManager();
+
         return $manager->getList(ItemTypes::FAILED_SUBSCRIPTIONS);
+    }
+
+    /**
+     * @param bool $run
+     *
+     * @throws DoesNotImplementProviderException
+     * @throws InstanceNotAvailableException
+     */
+    protected function create($run = true)
+    {
+        foreach ($this->providerDependencies as $provider) {
+            self::registerProvider($provider);
+        }
+
+        if ($run) {
+            $this->run();
+        }
     }
 
     /**
