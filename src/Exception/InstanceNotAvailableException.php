@@ -1,13 +1,13 @@
 <?php
 
-namespace Jascha030\WPSI\Exception;
+namespace Jascha030\WPOL\Subscription\Exception;
 
 use Exception;
 
 /**
  * Class InstanceNotAvailableException
  *
- * @package Jascha030\WPSI\Exception
+ * @package Jascha030\WPOL\Subscription\Exception
  */
 class InstanceNotAvailableException extends Exception
 {

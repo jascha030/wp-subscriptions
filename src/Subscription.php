@@ -1,13 +1,13 @@
 <?php
 
-namespace Jascha030\WPSI\Subscription;
+namespace Jascha030\WPOL\Subscription;
 
-use Jascha030\WPSI\Exception\SubscriptionException;
+use Jascha030\WPOL\Subscription\Exception\SubscriptionException;
 
 /**
  * Class Subscription
  *
- * @package Jascha030\WPSI\Subscription
+ * @package Jascha030\WPOL\Subscription
  */
 class Subscription implements Subscribable
 {

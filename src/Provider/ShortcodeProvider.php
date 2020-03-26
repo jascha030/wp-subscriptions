@@ -1,11 +1,11 @@
 <?php
 
-namespace Jascha030\WPSI\Subscription\Provider;
+namespace Jascha030\WPOL\Subscription\Provider;
 
 /**
  * Interface ShortcodeProvider
  *
- * @package Jascha030\WPSI\Subscription\Provider
+ * @package Jascha030\WPOL\Subscription\Provider
  */
 interface ShortcodeProvider extends SubscriptionProvider
 {

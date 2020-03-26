@@ -1,16 +1,16 @@
 <?php
 
-namespace Jascha030\WPSI\Subscription\Manager;
+namespace Jascha030\WPOL\Subscription\Manager;
 
 use Closure;
-use Jascha030\WPSI\Exception\DoesNotImplementProviderException;
-use Jascha030\WPSI\Exception\InstanceNotAvailableException;
-use Jascha030\WPSI\Subscription\Provider\SubscriptionProvider;
+use Jascha030\WPOL\Subscription\Exception\DoesNotImplementProviderException;
+use Jascha030\WPOL\Subscription\Exception\InstanceNotAvailableException;
+use Jascha030\WPOL\Subscription\Provider\SubscriptionProvider;
 
 /**
  * Class Plugin
  *
- * @package Jascha030\WPSI\Plugin
+ * @package Jascha030\WPOL\Subscription\Plugin
  */
 class PluginAPI
 {

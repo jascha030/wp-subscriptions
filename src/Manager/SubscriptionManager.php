@@ -1,16 +1,16 @@
 <?php
 
-namespace Jascha030\WPSI\Subscription\Manager;
+namespace Jascha030\WPOL\Subscription\Manager;
 
 use Exception;
-use Jascha030\WPSI\Exception\DoesNotImplementProviderException;
-use Jascha030\WPSI\Subscription\Provider\ActionProvider;
-use Jascha030\WPSI\Subscription\Provider\FilterProvider;
-use Jascha030\WPSI\Subscription\Provider\ShortcodeProvider;
-use Jascha030\WPSI\Subscription\Provider\SubscriptionProvider;
-use Jascha030\WPSI\Subscription\ActionSubscription;
-use Jascha030\WPSI\Subscription\FilterSubscription;
-use Jascha030\WPSI\Subscription\ShortcodeSubscription;
+use Jascha030\WPOL\Subscription\Exception\DoesNotImplementProviderException;
+use Jascha030\WPOL\Subscription\Provider\ActionProvider;
+use Jascha030\WPOL\Subscription\Provider\FilterProvider;
+use Jascha030\WPOL\Subscription\Provider\ShortcodeProvider;
+use Jascha030\WPOL\Subscription\Provider\SubscriptionProvider;
+use Jascha030\WPOL\Subscription\ActionSubscription;
+use Jascha030\WPOL\Subscription\FilterSubscription;
+use Jascha030\WPOL\Subscription\ShortcodeSubscription;
 use ReflectionException;
 use ReflectionMethod;
 
