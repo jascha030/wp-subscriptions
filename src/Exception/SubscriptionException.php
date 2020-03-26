@@ -5,10 +5,10 @@ namespace Jascha030\WPOL\Subscription\Exception;
 use Exception;
 
 /**
- * Class InvalidMethodException
+ * Class SubscriptionException
  *
  * @package Jascha030\WPOL\Subscription\Exception
  */
-class InvalidMethodException extends Exception
+class SubscriptionException extends Exception
 {
 }

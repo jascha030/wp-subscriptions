@@ -2,13 +2,11 @@
 
 namespace Jascha030\WPOL\Subscription\Exception;
 
-use Exception;
-
 /**
- * Class InvalidMethodException
+ * Class DoesNotImplementSubscriberException
  *
  * @package Jascha030\WPOL\Subscription\Exception
  */
-class InvalidMethodException extends Exception
+class DoesNotImplementProviderException extends InvalidClassException
 {
 }
