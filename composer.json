@@ -1,7 +1,7 @@
 {
-  "name": "jascha030/wpSubscriberInterface",
-  "description": "OOP backbone for Wordpress Plugin development",
-  "version": "1.3.2",
+  "name": "jascha030/wpol-subscriptions",
+  "description": "OOP Interface for using the WP Plugin API (Hooks)",
+  "version": "1.0.0",
   "license": "MIT",
   "authors": [
     {
@@ -13,7 +13,7 @@
   ],
   "autoload": {
     "psr-4": {
-      "Jascha030\\WPSI\\": "src/"
+      "Jascha030\\WPOL\\Subscription\\": "src/"
     }
   }
 }

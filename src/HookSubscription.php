@@ -1,14 +1,14 @@
 <?php
 
-namespace Jascha030\WPSI\Subscription;
+namespace Jascha030\WPOL\Subscription;
 
-use Jascha030\WPSI\Exception\InvalidArgumentException;
-use Jascha030\WPSI\Exception\NotCallableException;
+use Jascha030\WPOL\Subscription\Exception\InvalidArgumentException;
+use Jascha030\WPOL\Subscription\Exception\NotCallableException;
 
 /**
  * Class HookSubscription
  *
- * @package Jascha030\WPSI\Subscription
+ * @package Jascha030\WPOL\Subscription
  */
 class HookSubscription extends Subscription
 {

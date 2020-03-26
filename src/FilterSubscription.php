@@ -1,24 +1,24 @@
 <?php
 
-namespace Jascha030\WPSI\Subscription;
+namespace Jascha030\WPOL\Subscription;
 
-use Jascha030\WPSI\Exception\InvalidArgumentException;
-use Jascha030\WPSI\Exception\NotCallableException;
-use Jascha030\WPSI\Exception\SubscriptionException;
+use Jascha030\WPOL\Subscription\Exception\InvalidArgumentException;
+use Jascha030\WPOL\Subscription\Exception\NotCallableException;
+use Jascha030\WPOL\Subscription\Exception\SubscriptionException;
 
 /**
- * Class ActionHookSubscription
+ * Class FilterSubscription
  *
- * @package Jascha030\WPSI\Subscription
+ * @package Jascha030\WPOL\Subscription
  */
-class ActionSubscription extends HookSubscription implements Unsubscribable
+class FilterSubscription extends HookSubscription implements Unsubscribable
 {
     private $priority;
 
     private $acceptedArguments;
 
     /**
-     * ActionSubscription constructor.
+     * FilterSubscription constructor.
      *
      * @param $tag
      * @param $callable
@@ -43,7 +43,7 @@ class ActionSubscription extends HookSubscription implements Unsubscribable
     {
         parent::subscribe();
 
-        add_action($this->tag, $this->callable, $this->priority, $this->acceptedArguments);
+        add_filter($this->tag, $this->callable, $this->priority, $this->acceptedArguments);
     }
 
     /**
@@ -54,8 +54,7 @@ class ActionSubscription extends HookSubscription implements Unsubscribable
         if ($this->isActive()) {
             throw new SubscriptionException("Can't unsubscribe before subscribing");
         } else {
-            remove_action($this->tag, $this->callable, $this->priority, $this->acceptedArguments);
-            $this->active = false;
+            remove_filter($this->tag, $this->callable, $this->priority, $this->acceptedArguments);
         }
     }
 }
