@@ -45,4 +45,17 @@ trait Provider
             return $class::$shortcodes;
         }
     }
+
+    /**
+     * @return array|bool
+     */
+    public static function getSettingsPages()
+    {
+        $class = get_called_class();
+
+        if (in_array(SettingsPageProvider::class, class_implements($class)) && property_exists($class,
+                'shortcodes')) {
+            return $class::$settingsPages;
+        }
+    }
 }
