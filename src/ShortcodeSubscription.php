@@ -13,6 +13,7 @@ class ShortcodeSubscription extends HookSubscription
 {
     /**
      * @throws NotCallableException
+     * @throws Exception\SubscriptionException
      */
     public function subscribe()
     {
