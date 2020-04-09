@@ -37,8 +37,21 @@ class HookSubscription extends Subscription
         $this->callable = $callable;
     }
 
+    public function info()
+    {
+        $methodString = null;
+
+        if ((is_array($this->callable))) {
+            $methodString = (is_string($this->callable[0])) ? $this->callable[0] : get_class($this->callable[0]);
+            $methodString .= ' ' . $this->callable[1];
+        }
+
+        return $methodString ?? $this->callable;
+    }
+
     /**
      * @throws NotCallableException
+     * @throws Exception\SubscriptionException
      */
     public function subscribe()
     {
