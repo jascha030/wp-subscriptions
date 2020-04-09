@@ -1,11 +1,11 @@
 <?php
 
-namespace Jascha030\WPOL\Subscription\Provider;
+namespace Jascha030\WP\Subscriptions\Provider;
 
 /**
  * Trait Provider
  *
- * @package Jascha030\WPOL\Subscription\Provider
+ * @package Jascha030\WP\Subscriptions\Provider
  */
 trait Provider
 {

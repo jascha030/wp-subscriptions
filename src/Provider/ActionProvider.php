@@ -1,11 +1,11 @@
 <?php
 
-namespace Jascha030\WPOL\Subscription\Provider;
+namespace Jascha030\WP\Subscriptions\Provider;
 
 /**
  * Interface ActionProvider
  *
- * @package Jascha030\WPOL\Subscription\Provider
+ * @package Jascha030\WP\Subscriptions\Provider
  */
 interface ActionProvider extends SubscriptionProvider
 {

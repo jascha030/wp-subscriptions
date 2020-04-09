@@ -1,5 +1,5 @@
 {
-  "name": "jascha030/wpol-subscriptions",
+  "name": "jascha030/wp-subscriptions",
   "description": "OOP Interface for using the WP Plugin API (Hooks)",
   "version": "1.0.0",
   "license": "MIT",
@@ -13,7 +13,7 @@
   ],
   "autoload": {
     "psr-4": {
-      "Jascha030\\WPOL\\Subscription\\": "src/"
+      "Jascha030\\WP\\Subscriptions\\": "src/"
     }
   }
 }

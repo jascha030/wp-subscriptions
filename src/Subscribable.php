@@ -1,11 +1,11 @@
 <?php
 
-namespace Jascha030\WPOL\Subscription;
+namespace Jascha030\WP\Subscriptions;
 
 /**
  * Interface Subscribable
  *
- * @package Jascha030\WPOL\Subscription
+ * @package Jascha030\WP\Subscriptions
  */
 interface Subscribable
 {
