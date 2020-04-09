@@ -1,11 +1,11 @@
 <?php
 
-namespace Jascha030\WPOL\Subscription\Manager;
+namespace Jascha030\WP\Subscriptions\Manager;
 
 /**
  * Class ItemTypes
  *
- * @package Jascha030\WPOL\Subscription\Manager
+ * @package Jascha030\WP\Subscriptions\Manager
  */
 class ItemTypes
 {

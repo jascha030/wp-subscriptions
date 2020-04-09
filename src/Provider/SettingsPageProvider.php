@@ -1,6 +1,6 @@
 <?php
 
-namespace Jascha030\WPOL\Subscription\Provider;
+namespace Jascha030\WP\Subscriptions\Provider;
 
 interface SettingsPageProvider extends SubscriptionProvider
 {

@@ -1,13 +1,13 @@
 <?php
 
-namespace Jascha030\WPOL\Subscription\Exception;
+namespace Jascha030\WP\Subscriptions\Exception;
 
 use Exception;
 
 /**
  * Class InvalidClassException
  *
- * @package Jascha030\WPOL\Subscription\Exception
+ * @package Jascha030\WP\Subscriptions\Exception
  */
 class InvalidClassException extends Exception
 {
