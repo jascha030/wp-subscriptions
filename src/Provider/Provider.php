@@ -16,8 +16,9 @@ trait Provider
     {
         $class = get_called_class();
 
-        return (in_array(ActionProvider::class, class_implements($class)) && property_exists($class,
-                'actions')) ? $class::$actions : false;
+        if (in_array(ActionProvider::class, class_implements($class)) && property_exists($class, 'actions')) {
+            return $class::$actions;
+        }
     }
 
     /**
@@ -27,8 +28,9 @@ trait Provider
     {
         $class = get_called_class();
 
-        return (in_array(FilterProvider::class, class_implements($class)) && property_exists($class,
-                'filters')) ? $class::$filters : false;
+        if (in_array(FilterProvider::class, class_implements($class)) && property_exists($class, 'filters')) {
+            return $class::$filters;
+        }
     }
 
     /**
@@ -38,7 +40,22 @@ trait Provider
     {
         $class = get_called_class();
 
-        return (in_array(ShortcodeProvider::class, class_implements($class)) && property_exists($class,
-                'shortcodes')) ? $class::$shortcodes : false;
+        if (in_array(ShortcodeProvider::class, class_implements($class)) && property_exists($class,
+                'shortcodes')) {
+            return $class::$shortcodes;
+        }
+    }
+
+    /**
+     * @return array|bool
+     */
+    public static function getSettingsPages()
+    {
+        $class = get_called_class();
+
+        if (in_array(SettingsPageProvider::class, class_implements($class)) && property_exists($class,
+                'shortcodes')) {
+            return $class::$settingsPages;
+        }
     }
 }

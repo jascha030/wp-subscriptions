@@ -20,6 +20,11 @@ class Subscription implements Subscribable
         $this->uuid = uniqid();
     }
 
+    public function info()
+    {
+        return get_class($this);
+    }
+
     /**
      * @throws SubscriptionException
      */

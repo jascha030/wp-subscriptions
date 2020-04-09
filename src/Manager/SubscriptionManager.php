@@ -11,6 +11,7 @@ use Jascha030\WPOL\Subscription\Provider\FilterProvider;
 use Jascha030\WPOL\Subscription\Provider\ShortcodeProvider;
 use Jascha030\WPOL\Subscription\Provider\SubscriptionProvider;
 use Jascha030\WPOL\Subscription\ShortcodeSubscription;
+use Jascha030\WPOL\Subscription\Subscription;
 use ReflectionException;
 use ReflectionMethod;
 
@@ -79,7 +80,10 @@ class SubscriptionManager
                 break;
 
             case ItemTypes::SUBSCRIPTIONS:
-                $data = $this->subscriptions;
+                foreach ($this->subscriptions as $subscription) {
+                    /** @var Subscription $subscription */
+                    $data[$subscription->getUuid()] = $subscription->info();
+                }
                 break;
 
             case ItemTypes::FAILED_SUBSCRIPTIONS:
@@ -91,7 +95,7 @@ class SubscriptionManager
             if (is_object($item)) {
                 $item = get_class($item);
             }
-            $list[$key] = (is_object($item)) ? get_class($item) : $item;
+            $list[$key] = $item;
         }
 
         return $list;
