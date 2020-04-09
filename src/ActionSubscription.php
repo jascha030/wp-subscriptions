@@ -38,6 +38,7 @@ class ActionSubscription extends HookSubscription implements Unsubscribable
 
     /**
      * @throws NotCallableException
+     * @throws SubscriptionException
      */
     public function subscribe()
     {
