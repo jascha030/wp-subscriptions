@@ -12,8 +12,14 @@ use Jascha030\WP\Subscriptions\Exception\NotCallableException;
  */
 class HookSubscription extends Subscription
 {
+    /**
+     * @var
+     */
     protected $tag;
 
+    /**
+     * @var callable
+     */
     protected $callable;
 
     /**
