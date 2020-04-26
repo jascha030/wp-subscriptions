@@ -13,8 +13,14 @@ use Jascha030\WP\Subscriptions\Exception\SubscriptionException;
  */
 class ActionSubscription extends HookSubscription implements Unsubscribable
 {
+    /**
+     * @var int
+     */
     private $priority;
 
+    /**
+     * @var int
+     */
     private $acceptedArguments;
 
     /**
