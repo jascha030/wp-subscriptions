@@ -16,7 +16,7 @@ class PluginAPI
 {
     public static $subscriptionManager = null;
 
-    protected $providerDependencies = [];
+    protected $providers = [];
 
     /**
      * WordpressPlugin constructor.
@@ -30,7 +30,7 @@ class PluginAPI
      */
     public function __construct($providers = [], $create = true)
     {
-        $this->providerDependencies = $providers;
+        $this->providers = $providers;
 
         $this->createSubscriptionManager();
 
@@ -106,7 +106,7 @@ class PluginAPI
      */
     protected function create($run = true)
     {
-        foreach ($this->providerDependencies as $provider) {
+        foreach ($this->providers as $provider) {
             self::registerProvider($provider);
         }
 
