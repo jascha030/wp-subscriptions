@@ -7,6 +7,11 @@ use ReflectionClass;
 use ReflectionException;
 use ReflectionMethod;
 
+/**
+ * Class AutoProvider
+ *
+ * @package Jascha030\WP\Subscriptions\Provider\Auto
+ */
 class AutoProvider
 {
     USE Provider;
