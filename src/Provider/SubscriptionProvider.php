@@ -9,4 +9,5 @@ namespace Jascha030\WP\Subscriptions\Provider;
  */
 interface SubscriptionProvider
 {
+    public function getData(string $type);
 }

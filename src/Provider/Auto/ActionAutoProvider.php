@@ -27,7 +27,6 @@ class ActionAutoProvider extends AutoProvider implements ActionProvider
     public function __construct(array $exclude = null)
     {
         parent::__construct();
-
         self::$actions = $this->init($exclude);
     }
 }

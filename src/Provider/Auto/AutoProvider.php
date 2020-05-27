@@ -46,11 +46,8 @@ class AutoProvider
             if (strpos($name, '__') !== 0) {
                 continue;
             }
-
-            if (! empty($exclude)) {
-                if (in_array($name, $exclude)) {
-                    continue;
-                }
+            if (! empty($exclude) && in_array($name, $exclude)) {
+                continue;
             }
 
             $hooks[$this->fromCamelCase($name)] = $name;

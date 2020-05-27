@@ -27,7 +27,6 @@ class FilterAutoProvider extends AutoProvider implements FilterProvider
     public function __construct(array $exclude = null)
     {
         parent::__construct();
-
         self::$filters = $this->init($exclude);
     }
 }

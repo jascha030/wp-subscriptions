@@ -9,8 +9,4 @@ namespace Jascha030\WP\Subscriptions\Provider;
  */
 interface FilterProvider extends SubscriptionProvider
 {
-    /**
-     * @return array
-     */
-    public static function getFilters();
 }

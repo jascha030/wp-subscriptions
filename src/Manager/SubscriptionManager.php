@@ -188,25 +188,9 @@ class SubscriptionManager
      *
      * @return array|mixed
      */
-    private function getProvidedData($provider, $type)
+    private function getProvidedData(SubscriptionProvider $provider, string $type)
     {
-        $data = [];
-
-        switch ($type) {
-            case ActionProvider::class:
-                $data = $provider->getActions();
-                break;
-
-            case FilterProvider::class:
-                $data = $provider->getFilters();
-                break;
-
-            case ShortcodeProvider::class:
-                $data = $provider->getShortcodes();
-                break;
-        }
-
-        return $data;
+        return $provider->getData($type);
     }
 
     /**

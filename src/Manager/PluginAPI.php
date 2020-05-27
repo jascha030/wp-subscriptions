@@ -12,9 +12,9 @@ use Jascha030\WP\Subscriptions\Provider\SubscriptionProvider;
  *
  * @package Jascha030\WP\Subscriptions\Plugin
  */
-class PluginAPI
+class PluginAPI extends SubscriptionManager
 {
-    public static $subscriptionManager = null;
+    protected static $instance;
 
     protected $providers = [];
 
@@ -32,112 +32,37 @@ class PluginAPI
     {
         $this->providers = $providers;
 
-        $this->createSubscriptionManager();
-
         if ($create) {
             $this->create();
         }
+
+        $this::$instance = $this;
     }
 
-    /**
-     * @return mixed
-     * @throws InstanceNotAvailableException
-     */
-    public static function getSubscriptionManager()
-    {
-        if (self::$subscriptionManager instanceof Closure) {
-            return call_user_func(self::$subscriptionManager);
-        } else {
-            throw new InstanceNotAvailableException("No SubscriptionManager instance available");
-        }
-    }
-
-    /**
-     * @param SubscriptionProvider $provider
-     *
-     * @throws DoesNotImplementProviderException
-     * @throws InstanceNotAvailableException
-     */
-    public static function registerProvider($provider)
-    {
-        /** @var SubscriptionManager $manager */
-        $manager = self::getSubscriptionManager();
-        $manager->register($provider);
-    }
-
-    /**
-     * @return mixed
-     * @throws InstanceNotAvailableException
-     */
     public static function listProviders()
     {
-        $manager = self::getSubscriptionManager();
-
-        return $manager->getList(ItemTypes::PROVIDERS);
+        return (static::getInstance())->getList(ItemTypes::PROVIDERS);
     }
 
     /**
      * @return mixed
-     * @throws InstanceNotAvailableException
      */
     public static function listSubscriptions()
     {
-        $manager = self::getSubscriptionManager();
-
-        return $manager->getList(ItemTypes::SUBSCRIPTIONS);
+        return (static::getInstance())->getList(ItemTypes::SUBSCRIPTIONS);
     }
 
     /**
      * @return mixed
-     * @throws InstanceNotAvailableException
      */
     public static function listFailedSubscriptions()
     {
-        $manager = self::getSubscriptionManager();
-
-        return $manager->getList(ItemTypes::FAILED_SUBSCRIPTIONS);
+        return (static::getInstance())->getList(ItemTypes::FAILED_SUBSCRIPTIONS);
     }
 
-    /**
-     * @param bool $run
-     *
-     * @throws DoesNotImplementProviderException
-     * @throws InstanceNotAvailableException
-     */
-    protected function create($run = true)
+    protected function create()
     {
-        foreach ($this->providers as $provider) {
-            self::registerProvider($provider);
-        }
-
-        if ($run) {
-            $this->run();
-        }
-    }
-
-    /**
-     * @throws InstanceNotAvailableException
-     */
-    protected function run()
-    {
-        $manager = self::getSubscriptionManager();
-        $manager->run();
-    }
-
-    private function createSubscriptionManager()
-    {
-        if (! $this::$subscriptionManager instanceof Closure) {
-            $this::$subscriptionManager = function () {
-                static $_instance;
-
-                if ($_instance !== null) {
-                    return $_instance;
-                }
-
-                $_instance = new SubscriptionManager();
-
-                return $_instance;
-            };
-        }
+        array_walk($this->providers, array($this, 'register'));
+        $this->run();
     }
 }

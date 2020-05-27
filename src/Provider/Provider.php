@@ -2,6 +2,9 @@
 
 namespace Jascha030\WP\Subscriptions\Provider;
 
+use Jascha030\WP\Subscriptions\Provider\Auto\ActionAutoProvider;
+use Jascha030\WP\Subscriptions\Provider\Auto\FilterAutoProvider;
+
 /**
  * Trait Provider
  *
@@ -9,53 +12,29 @@ namespace Jascha030\WP\Subscriptions\Provider;
  */
 trait Provider
 {
-    /**
-     * @return array|bool
-     */
-    public static function getActions()
+    // Todo how to extend this?
+    protected $dataDefinitions = [
+        ActionProvider::class     => 'actions',
+        FilterProvider::class     => 'filters',
+        ShortcodeProvider::class  => 'shortcodes',
+        ActionAutoProvider::class => 'actions',
+        FilterAutoProvider::class => 'filters',
+    ];
+
+    public function getData(string $type)
     {
-        $class = get_called_class();
+        $implements = class_implements(static::class);
 
-        if (in_array(ActionProvider::class, class_implements($class)) && property_exists($class, 'actions')) {
-            return $class::$actions;
+        if (! in_array($type, $implements) || ! array_key_exists($type, $this->dataDefinitions)) {
+            throw new \Exception();
         }
-    }
 
-    /**
-     * @return array|bool
-     */
-    public static function getFilters()
-    {
-        $class = get_called_class();
-
-        if (in_array(FilterProvider::class, class_implements($class)) && property_exists($class, 'filters')) {
-            return $class::$filters;
+        if (! property_exists($type, $this->dataDefinitions['type'])) {
+            return [];
         }
-    }
 
-    /**
-     * @return array|bool
-     */
-    public static function getShortcodes()
-    {
-        $class = get_called_class();
+        $prop = $this->dataDefinitions[$type];
 
-        if (in_array(ShortcodeProvider::class, class_implements($class)) && property_exists($class,
-                'shortcodes')) {
-            return $class::$shortcodes;
-        }
-    }
-
-    /**
-     * @return array|bool
-     */
-    public static function getSettingsPages()
-    {
-        $class = get_called_class();
-
-        if (in_array(SettingsPageProvider::class, class_implements($class)) && property_exists($class,
-                'shortcodes')) {
-            return $class::$settingsPages;
-        }
+        return static::$$prop;
     }
 }
