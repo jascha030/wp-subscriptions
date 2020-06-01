@@ -2,23 +2,32 @@
 
 namespace Jascha030\WP\Subscriptions;
 
-use Jascha030\WP\Subscriptions\Exception\NotCallableException;
-
 /**
  * Class ShortcodeSubscription
  *
  * @package Jascha030\WP\Subscriptions
  */
-class ShortcodeSubscription extends HookSubscription
+class ShortcodeSubscription extends Subscription
 {
+    protected $data = [];
+
     /**
-     * @throws NotCallableException
-     * @throws Exception\SubscriptionException
+     * ShortcodeSubscription constructor.
+     *
+     * @param $tag
+     * @param $callable
      */
+    public function __construct($tag, $callable)
+    {
+        $this->data['tag']      = $tag;
+        $this->data['callable'] = $callable;
+
+        parent::__construct();
+    }
+
     public function subscribe()
     {
         parent::subscribe();
-
-        add_shortcode($this->tag, $this->callable);
+        add_shortcode($this->data['tag'], $this->data['callable']);
     }
 }
