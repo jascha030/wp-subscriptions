@@ -7,7 +7,7 @@ namespace Jascha030\WP\Subscriptions\Factory;
  *
  * @package Jascha030\WP\Subscriptions\Factory
  */
-class HookFactory implements Factory
+class HookSubscriptionFactory implements SubscriptionFactory
 {
     public function create($provider, array $arguments = [])
     {
