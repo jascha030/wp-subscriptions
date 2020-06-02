@@ -53,8 +53,9 @@ class HookSubscription extends Subscription implements Unsubscribable
             throw new NotCallableException("Invalid callable");
         }
 
-        if (!empty(static::METHOD)) {
-            call_user_func(static::METHOD, ...$this->data);
+        if (! empty(static::METHOD)) {
+            call_user_func(static::METHOD, $this->data['tag'], $this->data['callable'], $this->data['priority'],
+                $this->data['acceptedArguments']);
             parent::subscribe();
         }
     }

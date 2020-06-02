@@ -2,7 +2,7 @@
 
 namespace Jascha030\WP\Subscriptions\Shared\Container;
 
-use Jascha030\WP\Subscriptions\Factory\Factory;
+use Jascha030\WP\Subscriptions\Factory\SubscriptionFactory;
 use Jascha030\WP\Subscriptions\Shared\Singleton;
 use Psr\Container\ContainerInterface;
 
@@ -33,15 +33,22 @@ class Container extends Singleton implements ContainerInterface
         if (is_null($concrete) && class_exists($abstract)) {
             $concrete = $abstract;
         }
+
+        if (is_object($concrete)) {
+            $this->resolved[$abstract] = true;
+            // Todo: what if shared
+            $this->entries[$abstract] = $concrete;
+        }
+
         $this->bindings[$abstract]['concrete'] = $concrete;
         $this->bindings[$abstract]['shared']   = $shared;
     }
 
     /**
      * @param string $abstract
-     * @param Factory $factory
+     * @param \Jascha030\WP\Subscriptions\Factory\SubscriptionFactory $factory
      */
-    public function bindFactory(string $abstract, Factory $factory)
+    public function bindFactory(string $abstract, SubscriptionFactory $factory)
     {
         $this->bind($abstract, $factory);
     }
@@ -97,10 +104,6 @@ class Container extends Singleton implements ContainerInterface
 
         $concrete = $this->bindings[$abstract]['concrete'];
         $prop     = $this->shared($abstract) ? 'entries' : 'shared';
-
-        if ($this->factoryInstance($abstract)) {
-            $entry = $this->make($abstract, $parameters);
-        }
 
         if ($concrete instanceof \Closure) {
             $entry = call_user_func($concrete, ...$parameters);
@@ -161,8 +164,7 @@ class Container extends Singleton implements ContainerInterface
 
     protected function factoryInstance($abstract): bool
     {
-        return (class_exists(get_class($this->concrete($abstract))) && in_array(Factory::class,
-                class_implements(get_class($this->concrete($abstract)))));
+        return (class_exists($abstract) && in_array(SubscriptionFactory::class, class_implements($abstract)));
     }
 
     protected function concrete($abstract)

@@ -23,18 +23,12 @@ trait Provider
 
     public function getData(string $type)
     {
-        $implements = class_implements(static::class);
-
-        if (! in_array($type, $implements) || ! array_key_exists($type, $this->dataDefinitions)) {
-            throw new \Exception();
-        }
-
-        if (! property_exists($type, $this->dataDefinitions['type'])) {
-            return [];
-        }
-
         $prop = $this->dataDefinitions[$type];
 
-        return static::$$prop;
+        if (property_exists(static::class, $prop)) {
+            return static::$$prop;
+        }
+
+        return [];
     }
 }
