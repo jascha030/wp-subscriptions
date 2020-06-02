@@ -2,33 +2,29 @@
 
 namespace Jascha030\WP\Subscriptions\Provider;
 
-use Jascha030\WP\Subscriptions\Provider\Auto\ActionAutoProvider;
-use Jascha030\WP\Subscriptions\Provider\Auto\FilterAutoProvider;
+use Jascha030\WP\Subscriptions\Shared\Container\WordpressSubscriptionContainer;
 
 /**
  * Trait Provider
  *
  * @package Jascha030\WP\Subscriptions\Provider
+ * @deprecated
  */
 trait Provider
 {
-    // Todo how to extend this?
-    protected $dataDefinitions = [
-        ActionProvider::class     => 'actions',
-        FilterProvider::class     => 'filters',
-        ShortcodeProvider::class  => 'shortcodes',
-        ActionAutoProvider::class => 'actions',
-        FilterAutoProvider::class => 'filters',
-    ];
-
+    /**
+     * getData
+     *
+     * @param string $type
+     *
+     * @return mixed
+     * @deprecated
+     */
     public function getData(string $type)
     {
-        $prop = $this->dataDefinitions[$type];
+        trigger_error(Provider::class . ' and ' . __METHOD__ . ' are deprecated' . WordpressSubscriptionContainer::class . 'resolves provider data automatically',
+            E_USER_DEPRECATED);
 
-        if (property_exists(static::class, $prop)) {
-            return static::$$prop;
-        }
-
-        return [];
+        return (WordpressSubscriptionContainer::getInstance())->getProviderData($this, $type);
     }
 }

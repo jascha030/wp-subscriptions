@@ -2,26 +2,24 @@
 
 namespace Jascha030\WP\Subscriptions\Manager;
 
-use Jascha030\WP\Subscriptions\Exception\DoesNotImplementProviderException;
-use Jascha030\WP\Subscriptions\Exception\InstanceNotAvailableException;
 use Jascha030\WP\Subscriptions\Shared\Container\WordpressSubscriptionContainer;
 use Jascha030\WP\Subscriptions\Shared\Singleton;
 
-/**
- * Class Plugin
- *
- * @package Jascha030\WP\Subscriptions\Plugin
- */
 class PluginAPI extends Singleton
 {
-    protected $providers = [];
-
     public function __construct($providers = [], $create = true)
     {
-        $this->providers = $providers;
+        $container = WordpressSubscriptionContainer::getInstance();
 
+        foreach ($providers as $provider) {
+            $abstract = $this->getAbstract($provider);
+            if ($abstract) {
+                $container->register($abstract, $provider);
+            }
+        }
+        
         if ($create) {
-            $this->create();
+            $container->run();
         }
     }
 
@@ -40,13 +38,16 @@ class PluginAPI extends Singleton
         return (WordpressSubscriptionContainer::getInstance())->getList(ItemTypes::FAILED_SUBSCRIPTIONS);
     }
 
-    protected function create()
+    protected function getAbstract($provider)
     {
-        $container = WordpressSubscriptionContainer::getInstance();
-
-        foreach ($this->providers as $provider) {
-            $container->register($provider);
+        if (is_string($provider)) {
+            $abstract = $provider;
+        } else if (is_object($provider)){
+            $abstract = get_class($provider);
+        } else {
+            $abstract = null;
         }
-        $container->run();
+
+        return $abstract;
     }
 }
