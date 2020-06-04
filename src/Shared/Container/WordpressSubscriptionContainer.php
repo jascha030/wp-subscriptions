@@ -25,7 +25,7 @@ class WordpressSubscriptionContainer extends Container
         $this->definitions = new DefinitionConfig();
     }
 
-    public function getDefinition(int $type, string $key)
+    public function getDefinition(int $type, string $key = null)
     {
         return $this->definitions->getDefinition($type, $key);
     }
@@ -78,7 +78,7 @@ class WordpressSubscriptionContainer extends Container
                 $abstract = $binding['concrete'];
             }
 
-            foreach ($this->definitions->getProviderMethods() as $type => $method) {
+            foreach ($this->getDefinition(DefinitionConfig::CREATION_METHOD) as $type => $method) {
                 $this->subscriptions = array_merge($this->subscriptions, $this->createSubscriptions($abstract, $type));
             }
         }

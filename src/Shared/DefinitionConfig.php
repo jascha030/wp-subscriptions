@@ -40,17 +40,17 @@ class DefinitionConfig
         $this->definitions['creationMethods']        = self::PREDEFINED_CREATION_METHODS;
     }
 
-    public function getDefinition(int $type, string $key)
+    public function getDefinition(int $type, string $key = null)
     {
         switch ($type) {
             case DefinitionConfig::SUBSCRIPTION:
-                return $this->definitions['subscriptionTypes'][$key] ?? false;
+                return $key ? $this->definitions['subscriptionTypes'][$key] : $this->definitions['subscriptionTypes'];
                 break;
             case DefinitionConfig::PROPERTY:
-                return $this->definitions['providerDataProperties'][$key] ?? false;
+                return $key ? $this->definitions['providerDataProperties'][$key] : $this->definitions['providerDataProperties'];
                 break;
             case DefinitionConfig::CREATION_METHOD:
-                return $this->definitions['providerMethods'][$key] ?? false;
+                return $key ? $this->definitions['creationMethods'][$key] : $this->definitions['creationMethods'];
                 break;
         }
 
@@ -78,7 +78,7 @@ class DefinitionConfig
      */
     public function getProviderMethods()
     {
-        return $this->definitions['providerMethods'];
+        return $this->definitions['creationMethods'];
     }
 
     public function registerSubscriptionType(string $providerClass, string $dataClass, $creationMethod = null)
