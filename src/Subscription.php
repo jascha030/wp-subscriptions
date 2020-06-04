@@ -9,20 +9,20 @@ use Jascha030\WP\Subscriptions\Exception\SubscriptionException;
  *
  * @package Jascha030\WP\Subscriptions
  */
-class Subscription implements Subscribable
+abstract class Subscription implements Subscribable
 {
-    protected $uuid;
+    protected $id;
 
     protected $active = false;
 
-    public function __construct()
+    final public function __construct()
     {
-        $this->uuid = uniqid();
+        $this->id = uniqid();
     }
 
-    public function info()
+    public function getId(): string
     {
-        return get_class($this);
+        return $this->id;
     }
 
     /**
@@ -30,26 +30,15 @@ class Subscription implements Subscribable
      */
     public function subscribe()
     {
-        if ($this->isActive()) {
+        if ($this->active()) {
             throw new SubscriptionException("Already subscribed");
-        } else {
-            $this->active = true;
         }
+
+        $this->active = true;
     }
 
-    /**
-     * @return bool
-     */
-    public function isActive(): bool
+    public function active(): bool
     {
         return $this->active;
-    }
-
-    /**
-     * @return string
-     */
-    public function getUuid(): string
-    {
-        return $this->uuid;
     }
 }

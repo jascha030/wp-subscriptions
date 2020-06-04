@@ -13,8 +13,6 @@ use Psr\Container\ContainerInterface;
  */
 class Container extends Singleton implements ContainerInterface
 {
-    protected static $instance;
-
     protected $resolved = [];
 
     protected $bindings = [];
@@ -36,8 +34,7 @@ class Container extends Singleton implements ContainerInterface
 
         if (is_object($concrete)) {
             $this->resolved[$abstract] = true;
-            // Todo: what if shared
-            $this->entries[$abstract] = $concrete;
+            $this->entries[$abstract]  = $concrete;
         }
 
         $this->bindings[$abstract]['concrete'] = $concrete;

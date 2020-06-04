@@ -11,7 +11,7 @@ use Jascha030\WP\Subscriptions\Exception\SubscriptionException;
  *
  * @package Jascha030\WP\Subscriptions
  */
-class HookSubscription extends Subscription implements Unsubscribable
+class HookSubscription extends Subscription
 {
     const METHOD = '';
 
@@ -35,18 +35,6 @@ class HookSubscription extends Subscription implements Unsubscribable
         ];
     }
 
-    public function info()
-    {
-        $methodString = null;
-
-        if ((is_array($this->data['callable']))) {
-            $methodString = (is_string($this->data['callable'][0])) ? $this->data['callable'][0] : get_class($this->data['callable'][0]);
-            $methodString .= ' ' . $this->data['callable'][1];
-        }
-
-        return $methodString ?? $this->data['callable'];
-    }
-
     public function subscribe()
     {
         if (! is_callable($this->data['callable']) && ! function_exists($this->data['callable'])) {
@@ -62,7 +50,7 @@ class HookSubscription extends Subscription implements Unsubscribable
 
     public function unsubscribe()
     {
-        if ($this->isActive()) {
+        if ($this->active()) {
             throw new SubscriptionException("Can't unsubscribe before subscribing");
         } else {
             call_user_func(static::UNSUB_METHOD, ...$this->data);
