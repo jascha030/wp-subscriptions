@@ -13,15 +13,9 @@ use Jascha030\WP\Subscriptions\Exception\SubscriptionException;
  */
 class FilterSubscription extends HookSubscription implements Unsubscribable
 {
-    /**
-     * @var int
-     */
-    private $priority;
+    const METHOD = 'add_filter';
 
-    /**
-     * @var int
-     */
-    private $acceptedArguments;
+    const UNSUB_METHOD = 'remove_filter';
 
     /**
      * FilterSubscription constructor.
@@ -31,37 +25,10 @@ class FilterSubscription extends HookSubscription implements Unsubscribable
      * @param int $priority
      * @param int $acceptedArguments
      *
-     * @throws InvalidArgumentException
+     * @throws \Jascha030\WP\Subscriptions\Exception\InvalidArgumentException
      */
     public function __construct($tag, $callable, $priority = 10, $acceptedArguments = 1)
     {
-        parent::__construct($tag, $callable);
-
-        $this->priority = $priority;
-
-        $this->acceptedArguments = $acceptedArguments;
-    }
-
-    /**
-     * @throws NotCallableException
-     * @throws SubscriptionException
-     */
-    public function subscribe()
-    {
-        parent::subscribe();
-
-        add_filter($this->tag, $this->callable, $this->priority, $this->acceptedArguments);
-    }
-
-    /**
-     * @throws SubscriptionException
-     */
-    public function unsubscribe()
-    {
-        if ($this->isActive()) {
-            throw new SubscriptionException("Can't unsubscribe before subscribing");
-        } else {
-            remove_filter($this->tag, $this->callable, $this->priority, $this->acceptedArguments);
-        }
+        parent::__construct($tag, $callable, $priority, $acceptedArguments);
     }
 }

@@ -4,33 +4,22 @@ namespace Jascha030\WP\Subscriptions;
 
 use Jascha030\WP\Subscriptions\Exception\InvalidArgumentException;
 use Jascha030\WP\Subscriptions\Exception\NotCallableException;
+use Jascha030\WP\Subscriptions\Exception\SubscriptionException;
 
 /**
  * Class HookSubscription
  *
  * @package Jascha030\WP\Subscriptions
  */
-class HookSubscription extends Subscription
+class HookSubscription extends Subscription implements Unsubscribable
 {
-    /**
-     * @var
-     */
-    protected $tag;
+    const METHOD = '';
 
-    /**
-     * @var callable
-     */
-    protected $callable;
+    const UNSUB_METHOD = '';
 
-    /**
-     * HookSubscription constructor.
-     *
-     * @param $tag
-     * @param $callable
-     *
-     * @throws InvalidArgumentException
-     */
-    public function __construct($tag, $callable)
+    protected $data;
+
+    public function __construct($tag, $callable, $priority = 10, $acceptedArguments = 1)
     {
         parent::__construct();
 
@@ -38,33 +27,46 @@ class HookSubscription extends Subscription
             throw new InvalidArgumentException("variable is not a valid callable");
         }
 
-        $this->tag = $tag;
-
-        $this->callable = $callable;
+        $this->data = [
+            'tag'               => $tag,
+            'callable'          => $callable,
+            'priority'          => $priority,
+            'acceptedArguments' => $acceptedArguments
+        ];
     }
 
     public function info()
     {
         $methodString = null;
 
-        if ((is_array($this->callable))) {
-            $methodString = (is_string($this->callable[0])) ? $this->callable[0] : get_class($this->callable[0]);
-            $methodString .= ' ' . $this->callable[1];
+        if ((is_array($this->data['callable']))) {
+            $methodString = (is_string($this->data['callable'][0])) ? $this->data['callable'][0] : get_class($this->data['callable'][0]);
+            $methodString .= ' ' . $this->data['callable'][1];
         }
 
-        return $methodString ?? $this->callable;
+        return $methodString ?? $this->data['callable'];
     }
 
-    /**
-     * @throws NotCallableException
-     * @throws Exception\SubscriptionException
-     */
     public function subscribe()
     {
-        if (! is_callable($this->callable) && ! function_exists($this->callable)) {
+        if (! is_callable($this->data['callable']) && ! function_exists($this->data['callable'])) {
             throw new NotCallableException("Invalid callable");
         }
 
-        parent::subscribe();
+        if (! empty(static::METHOD)) {
+            call_user_func(static::METHOD, $this->data['tag'], $this->data['callable'], $this->data['priority'],
+                $this->data['acceptedArguments']);
+            parent::subscribe();
+        }
+    }
+
+    public function unsubscribe()
+    {
+        if ($this->isActive()) {
+            throw new SubscriptionException("Can't unsubscribe before subscribing");
+        } else {
+            call_user_func(static::UNSUB_METHOD, ...$this->data);
+            $this->active = false;
+        }
     }
 }

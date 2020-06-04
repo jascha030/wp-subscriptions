@@ -2,60 +2,29 @@
 
 namespace Jascha030\WP\Subscriptions\Provider;
 
+use Jascha030\WP\Subscriptions\Shared\Container\WordpressSubscriptionContainer;
+
 /**
  * Trait Provider
  *
  * @package Jascha030\WP\Subscriptions\Provider
+ * @deprecated
  */
 trait Provider
 {
     /**
-     * @return array|bool
+     * getData
+     *
+     * @param string $type
+     *
+     * @return mixed
+     * @deprecated
      */
-    public static function getActions()
+    public function getData(string $type)
     {
-        $class = get_called_class();
+        trigger_error(Provider::class . ' and ' . __METHOD__ . ' are deprecated' . WordpressSubscriptionContainer::class . 'resolves provider data automatically',
+            E_USER_DEPRECATED);
 
-        if (in_array(ActionProvider::class, class_implements($class)) && property_exists($class, 'actions')) {
-            return $class::$actions;
-        }
-    }
-
-    /**
-     * @return array|bool
-     */
-    public static function getFilters()
-    {
-        $class = get_called_class();
-
-        if (in_array(FilterProvider::class, class_implements($class)) && property_exists($class, 'filters')) {
-            return $class::$filters;
-        }
-    }
-
-    /**
-     * @return array|bool
-     */
-    public static function getShortcodes()
-    {
-        $class = get_called_class();
-
-        if (in_array(ShortcodeProvider::class, class_implements($class)) && property_exists($class,
-                'shortcodes')) {
-            return $class::$shortcodes;
-        }
-    }
-
-    /**
-     * @return array|bool
-     */
-    public static function getSettingsPages()
-    {
-        $class = get_called_class();
-
-        if (in_array(SettingsPageProvider::class, class_implements($class)) && property_exists($class,
-                'shortcodes')) {
-            return $class::$settingsPages;
-        }
+        return (WordpressSubscriptionContainer::getInstance())->getProviderData($this, $type);
     }
 }

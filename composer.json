@@ -15,5 +15,8 @@
     "psr-4": {
       "Jascha030\\WP\\Subscriptions\\": "src/"
     }
+  },
+  "require": {
+    "psr/container": "^1.0"
   }
 }
