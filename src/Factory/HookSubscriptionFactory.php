@@ -7,7 +7,7 @@ use Jascha030\WP\Subscriptions\FilterSubscription;
 use Jascha030\WP\Subscriptions\Provider\ActionProvider;
 use Jascha030\WP\Subscriptions\Provider\FilterProvider;
 use Jascha030\WP\Subscriptions\Shared\Container\WordpressSubscriptionContainer;
-use Jascha030\WP\Subscriptions\Shared\DataConfig;
+use Jascha030\WP\Subscriptions\Shared\DefinitionConfig;
 
 /**
  * Class HookFactory
@@ -41,6 +41,6 @@ class HookSubscriptionFactory implements SubscriptionFactory
 
     protected function resolveSubscriptionType($providerType)
     {
-        return (WordpressSubscriptionContainer::getInstance())->getDefinition(DataConfig::SUBSCRIPTION, $providerType);
+        return (WordpressSubscriptionContainer::getInstance())->getDefinition(DefinitionConfig::SUBSCRIPTION, $providerType);
     }
 }

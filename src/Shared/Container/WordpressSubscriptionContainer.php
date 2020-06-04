@@ -5,14 +5,14 @@ namespace Jascha030\WP\Subscriptions\Shared\Container;
 use Jascha030\WP\Subscriptions\Exception\DoesNotImplementProviderException;
 use Jascha030\WP\Subscriptions\Manager\ItemTypes;
 use Jascha030\WP\Subscriptions\Provider\SubscriptionProvider;
-use Jascha030\WP\Subscriptions\Shared\DataConfig;
+use Jascha030\WP\Subscriptions\Shared\DefinitionConfig;
 
 class WordpressSubscriptionContainer extends Container
 {
     /**
-     * @var array|\Jascha030\WP\Subscriptions\Shared\DataConfig
+     * @var array|\Jascha030\WP\Subscriptions\Shared\DefinitionConfig
      */
-    protected $dataConfig = [];
+    protected $definitions = [];
 
     protected $providerBindings = [];
 
@@ -22,25 +22,12 @@ class WordpressSubscriptionContainer extends Container
 
     public function __construct()
     {
-        $this->dataConfig = new DataConfig();
+        $this->definitions = new DefinitionConfig();
     }
 
     public function getDefinition(int $type, string $key)
     {
-        switch ($type) {
-            case DataConfig::SUBSCRIPTION:
-                return $this->dataConfig->getSubscriptionTypes()[$key] ?? false;
-                break;
-            case DataConfig::PROPERTY:
-                return $this->dataConfig->getProviderDataProperties()[$key] ?? false;
-                break;
-            case DataConfig::CREATION_METHOD:
-                return $this->dataConfig->getProviderMethods()[$key] ?? false;
-                break;
-            default:
-                return false;
-                break;
-        }
+        return $this->definitions->getDefinition($type, $key);
     }
 
     public function run()
@@ -81,27 +68,17 @@ class WordpressSubscriptionContainer extends Container
         }
     }
 
-    public function registerSubscriptionType(string $providerClass, string $dataClass, $creationMethod = null)
-    {
-        /**
-         * Todo: implement
-         *
-         * Need provider class
-         * Need data / subscription class
-         * Need creation method in form of Factory class / Callable / null = dataclass without constructor
-         */
-    }
-
     protected function createSubscriptionsFromProvidedData()
     {
         foreach ($this->providerBindings as $abstract) {
             $binding = $this->bindings[$abstract];
 
+            /** Backwards compatibility */
             if (is_object($binding['concrete'])) {
                 $abstract = $binding['concrete'];
             }
 
-            foreach ($this->dataConfig->getProviderMethods() as $type => $method) {
+            foreach ($this->definitions->getProviderMethods() as $type => $method) {
                 $this->subscriptions = array_merge($this->subscriptions, $this->createSubscriptions($abstract, $type));
             }
         }
@@ -109,7 +86,7 @@ class WordpressSubscriptionContainer extends Container
 
     protected function createSubscriptions($provider, string $type)
     {
-        $creationMethod = $this->getDefinition(DataConfig::CREATION_METHOD, $type);
+        $creationMethod = $this->getDefinition(DefinitionConfig::CREATION_METHOD, $type);
         if (! $creationMethod) {
             return [];
         }
@@ -127,7 +104,7 @@ class WordpressSubscriptionContainer extends Container
 
     public function getProviderData(SubscriptionProvider $provider, $type)
     {
-        $prop = $this->getDefinition(DataConfig::PROPERTY, $type);
+        $prop = $this->getDefinition(DefinitionConfig::PROPERTY, $type);
 
         if (property_exists(get_class($provider), $prop)) {
             return $provider::$$prop;
@@ -136,6 +113,13 @@ class WordpressSubscriptionContainer extends Container
         return [];
     }
 
+    /**
+     * Todo: move to plugin
+     *
+     * @param int $type
+     *
+     * @return array|null
+     */
     public function getList(int $type = ItemTypes::PROVIDERS)
     {
         $data = [];

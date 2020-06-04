@@ -2,21 +2,10 @@
 
 namespace Jascha030\WP\Subscriptions;
 
-/**
- * Class ShortcodeSubscription
- *
- * @package Jascha030\WP\Subscriptions
- */
 class ShortcodeSubscription extends Subscription
 {
     protected $data = [];
 
-    /**
-     * ShortcodeSubscription constructor.
-     *
-     * @param $tag
-     * @param $callable
-     */
     public function __construct($tag, $callable)
     {
         $this->data['tag']      = $tag;
