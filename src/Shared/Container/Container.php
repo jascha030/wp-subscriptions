@@ -19,7 +19,27 @@ class Container extends Singleton implements ContainerInterface
 
     protected $entries = [];
 
-    protected $shared = [];
+    /**
+     * @param string $id
+     * @param array $params
+     *
+     * @return \Closure|mixed|string
+     * @throws \Exception
+     */
+    public function get($id, $params = [])
+    {
+        return $this->resolve($id);
+    }
+
+    /**
+     * @param string $id
+     *
+     * @return bool
+     */
+    public function has($id): bool
+    {
+        return $this->bound($id) || $this->resolved($id);
+    }
 
     /**
      * @param string $abstract
@@ -39,27 +59,6 @@ class Container extends Singleton implements ContainerInterface
 
         $this->bindings[$abstract]['concrete'] = $concrete;
         $this->bindings[$abstract]['shared']   = $shared;
-    }
-
-    /**
-     * @param string $abstract
-     * @param \Jascha030\WP\Subscriptions\Factory\SubscriptionFactory $factory
-     */
-    public function bindFactory(string $abstract, SubscriptionFactory $factory)
-    {
-        $this->bind($abstract, $factory);
-    }
-
-    /**
-     * @param string $id
-     * @param array $params
-     *
-     * @return \Closure|mixed|string
-     * @throws \Exception
-     */
-    public function get($id, $params = [])
-    {
-        return $this->resolve($id);
     }
 
     /**
@@ -91,16 +90,15 @@ class Container extends Singleton implements ContainerInterface
      */
     protected function resolve(string $abstract, $parameters = [])
     {
+        if ($this->resolved($abstract)) {
+            return $this->entries[$abstract];
+        }
+
         if (! $this->bound($abstract)) {
             throw new \Exception("Abstract: {$abstract}, not bound");
         }
 
-        if ($this->resolved($abstract)) {
-            return $this->shared($abstract) ? $this->shared[$abstract] : $this->entries[$abstract];
-        }
-
         $concrete = $this->bindings[$abstract]['concrete'];
-        $prop     = $this->shared($abstract) ? 'entries' : 'shared';
 
         if ($concrete instanceof \Closure) {
             $entry = call_user_func($concrete, ...$parameters);
@@ -118,40 +116,10 @@ class Container extends Singleton implements ContainerInterface
             throw new \Exception("Entry for {$abstract} could not be resolved");
         }
 
-        $this->{$prop}[$abstract]  = $entry;
+        $this->entries[$abstract]  = $entry;
         $this->resolved[$abstract] = true;
 
         return $entry;
-    }
-
-    /**
-     * @param string $id
-     *
-     * @return bool
-     */
-    public function has($id): bool
-    {
-        return $this->exists($id);
-    }
-
-    /**
-     * @param $abstract
-     *
-     * @return bool
-     */
-    protected function exists($abstract): bool
-    {
-        return $this->bound($abstract) || $this->resolved($abstract);
-    }
-
-    protected function shared($abstract): bool
-    {
-        return ! empty($this->shared[$abstract]) || $this->sharedBinding($abstract);
-    }
-
-    protected function sharedBinding($abstract): bool
-    {
-        return $this->bindings[$abstract]['shared'];
     }
 
     protected function bound($abstract): bool

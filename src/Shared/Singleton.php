@@ -6,10 +6,6 @@ class Singleton
 {
     protected static $instance;
 
-    protected function __construct()
-    {
-    }
-
     final public static function getInstance()
     {
         if (is_null(static::$instance)) {
