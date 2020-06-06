@@ -4,19 +4,13 @@ namespace Jascha030\WP\Subscriptions;
 
 class ShortcodeSubscription extends Subscription
 {
-    protected $data = [];
-
-    public function __construct($tag, $callable)
+    protected function activation()
     {
-        $this->data['tag']      = $tag;
-        $this->data['callable'] = $callable;
-
-        parent::__construct();
+        call_user_func_array('add_shortcode', $this->data);
     }
 
-    public function subscribe()
+    protected function termination()
     {
-        parent::subscribe();
-        add_shortcode($this->data['tag'], $this->data['callable']);
+        call_user_func('remove_shortcode', $this->data['tag']);
     }
 }

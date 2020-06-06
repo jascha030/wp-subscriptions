@@ -3,6 +3,7 @@
 namespace Jascha030\WP\Subscriptions;
 
 use Jascha030\WP\Subscriptions\Exception\SubscriptionException;
+use Jascha030\WP\Subscriptions\Provider\SubscriptionProvider;
 
 /**
  * Class Subscription
@@ -11,34 +12,64 @@ use Jascha030\WP\Subscriptions\Exception\SubscriptionException;
  */
 abstract class Subscription implements Subscribable
 {
-    protected $id;
+    private static $constructorToken = null;
 
-    protected $active = false;
+    protected $data;
 
-    final public function __construct()
+    private $id;
+
+    private $active = false;
+
+    final private function __construct()
     {
         $this->id = uniqid();
     }
 
-    public function getId(): string
+    abstract public static function create(SubscriptionProvider $provider, $context);
+
+    final protected static function getConstructorToken()
+    {
+        if (self::$constructorToken === null) {
+            self::$constructorToken = new \stdClass();
+        }
+
+        return self::$constructorToken;
+    }
+
+    final public function getId(): string
     {
         return $this->id;
+    }
+
+    final public function getActive(): bool
+    {
+        return $this->active;
     }
 
     /**
      * @throws SubscriptionException
      */
-    public function subscribe()
+    final public function subscribe()
     {
-        if ($this->active()) {
-            throw new SubscriptionException("Already subscribed");
+        if ($this->getActive()) {
+            throw new SubscriptionException("Already subscribed to {$this->id}");
         }
 
         $this->active = true;
+        $this->activation();
     }
 
-    public function active(): bool
+    final public function unsubscribe()
     {
-        return $this->active;
+        if (! $this->getActive()) {
+            throw new SubscriptionException("Already unsubscribed to {$this->id}");
+        }
+
+        $this->active = false;
+        $this->termination();
     }
+
+    abstract protected function activation();
+
+    abstract protected function termination();
 }
