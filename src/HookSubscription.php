@@ -13,19 +13,25 @@ use function Jascha030\WP\Subscriptions\Shared\Container\WPSC;
  *
  * @package Jascha030\WP\Subscriptions
  */
-class HookSubscription extends Subscription
+abstract class HookSubscription extends Subscription
 {
     protected const CONTEXT = '';
 
-    public static function create(SubscriptionProvider $provider, $context)
+    /**
+     * @param \Jascha030\WP\Subscriptions\Provider\SubscriptionProvider $provider
+     * @param $context
+     *
+     * @return array
+     * @throws \Jascha030\WP\Subscriptions\Exception\InvalidArgumentException
+     */
+    public static function create(SubscriptionProvider $provider, $context): array
     {
         $subscriptions = [];
         $data          = WPSC()->getProviderData($provider, $context);
         $type          = WPSC()->getDefinition(DefinitionConfig::SUBSCRIPTION, $context);
 
         foreach ($data as $tag => $parameters) {
-            $method   = is_array($parameters) ? $parameters[0] : $parameters;
-            $callable = [$provider, $method];
+            $callable = [$provider, is_array($parameters) ? $parameters[0] : $parameters];
 
             if (! is_callable($callable)) {
                 throw new InvalidArgumentException('variable is not a valid callable');
@@ -41,13 +47,13 @@ class HookSubscription extends Subscription
         return $subscriptions;
     }
 
-    protected function activation()
+    protected function activation(): void
     {
-        call_user_func_array('add_' . static::CONTEXT, $this->data);
+        call_user_func('add_' . static::CONTEXT, ...$this->data);
     }
 
-    protected function termination()
+    protected function termination(): void
     {
-        call_user_func_array('remove_' . static::CONTEXT, $this->data);
+        call_user_func('remove_' . static::CONTEXT, ...$this->data);
     }
 }

@@ -16,18 +16,22 @@ class Singleton
     }
 
     /**
+     * __clone
+     * Oi mate! In a galaxy far far away cloned men sound like they are from New Zealand...
+     *
      * This is illegal therefore declared private
      */
     private function __clone()
     {
-        // Oi mate! In a galaxy far far away cloned men sound like they are from New Zealand...
     }
 
     /**
+     * __wakeup
+     * grabyabrushandputonalittlemakeup... hidethescarsandfadeawaytheshakup...
+     *
      * This is illegal therefore declared private
      */
     private function __wakeup()
     {
-        // grabyabrushandputonalittlemakeup... hidethescarsandfadeawaytheshakup...
     }
 }

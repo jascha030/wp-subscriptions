@@ -22,8 +22,10 @@ trait Provider
      */
     public function getData(string $type)
     {
-        trigger_error(Provider::class . ' and ' . __METHOD__ . ' are deprecated' . WordpressSubscriptionContainer::class . 'resolves provider data automatically',
-            E_USER_DEPRECATED);
+        trigger_error(
+            static::class . ' and ' . __METHOD__ . ' are deprecated' . WordpressSubscriptionContainer::class . 'resolves provider data automatically',
+            E_USER_DEPRECATED
+        );
 
         return (WordpressSubscriptionContainer::getInstance())->getProviderData($this, $type);
     }

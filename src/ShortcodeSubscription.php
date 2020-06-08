@@ -2,15 +2,22 @@
 
 namespace Jascha030\WP\Subscriptions;
 
+use Jascha030\WP\Subscriptions\Provider\SubscriptionProvider;
+
 class ShortcodeSubscription extends Subscription
 {
-    protected function activation()
+    public static function create(SubscriptionProvider $provider, $context)
     {
-        call_user_func_array('add_shortcode', $this->data);
+        // TODO: Implement create() method.
     }
 
-    protected function termination()
+    protected function activation(): void
     {
-        call_user_func('remove_shortcode', $this->data['tag']);
+        add_shortcode(...$this->data);
+    }
+
+    protected function termination(): void
+    {
+        remove_shortcode($this->data['tag']);
     }
 }

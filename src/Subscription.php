@@ -12,7 +12,9 @@ use Jascha030\WP\Subscriptions\Provider\SubscriptionProvider;
  */
 abstract class Subscription implements Subscribable
 {
-    private static $constructorToken = null;
+    public const ID_PREFIX = 'wpsc_';
+
+    private static $constructorToken;
 
     protected $data;
 
@@ -20,21 +22,12 @@ abstract class Subscription implements Subscribable
 
     private $active = false;
 
-    final private function __construct()
+    final protected function __construct()
     {
-        $this->id = uniqid();
+        $this->id = uniqid(static::ID_PREFIX, true);
     }
 
     abstract public static function create(SubscriptionProvider $provider, $context);
-
-    final protected static function getConstructorToken()
-    {
-        if (self::$constructorToken === null) {
-            self::$constructorToken = new \stdClass();
-        }
-
-        return self::$constructorToken;
-    }
 
     final public function getId(): string
     {
@@ -49,7 +42,7 @@ abstract class Subscription implements Subscribable
     /**
      * @throws SubscriptionException
      */
-    final public function subscribe()
+    final public function subscribe(): void
     {
         if ($this->getActive()) {
             throw new SubscriptionException("Already subscribed to {$this->id}");
@@ -59,7 +52,10 @@ abstract class Subscription implements Subscribable
         $this->activation();
     }
 
-    final public function unsubscribe()
+    /**
+     * @throws \Jascha030\WP\Subscriptions\Exception\SubscriptionException
+     */
+    final public function unsubscribe(): void
     {
         if (! $this->getActive()) {
             throw new SubscriptionException("Already unsubscribed to {$this->id}");

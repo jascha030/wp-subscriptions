@@ -14,6 +14,9 @@ class DefinitionConfig
     public const SUBSCRIPTION = 0;
     public const PROPERTY = 1;
 
+    /**
+     * @var \Jascha030\WP\Subscriptions\Subscription[]
+     */
     public const PREDEFINED_PROVIDER_SUBSCRIPTION_TYPES = [
         ActionProvider::class => ActionSubscription::class,
         FilterProvider::class => FilterSubscription::class
@@ -33,13 +36,20 @@ class DefinitionConfig
         $this->definitions['providerDataProperties'] = self::PREDEFINED_PROVIDER_DATA_PROPERTIES;
     }
 
+    /**
+     * @param int $type
+     * @param string|null $key
+     *
+     * @return mixed
+     * @throws \Exception
+     */
     public function getDefinition(int $type, string $key = null)
     {
         switch ($type) {
-            case DefinitionConfig::SUBSCRIPTION:
+            case self::SUBSCRIPTION:
                 return $key ? $this->definitions['subscriptionTypes'][$key] : $this->definitions['subscriptionTypes'];
                 break;
-            case DefinitionConfig::PROPERTY:
+            case self::PROPERTY:
                 return $key ? $this->definitions['providerDataProperties'][$key] : $this->definitions['providerDataProperties'];
                 break;
         }
@@ -58,7 +68,7 @@ class DefinitionConfig
     /**
      * @return array|string[]
      */
-    public function getProviderDataProperties()
+    public function getProviderDataProperties(): array
     {
         return $this->definitions['providerDataProperties'];
     }
@@ -66,12 +76,12 @@ class DefinitionConfig
     /**
      * @return array|string[]
      */
-    public function getProviderMethods()
+    public function getProviderMethods(): array
     {
         return $this->definitions['creationMethods'];
     }
 
-    public function registerSubscriptionType(string $providerClass, string $dataClass, $creationMethod = null)
+    public function registerSubscriptionType(string $providerClass, string $dataClass, $creationMethod = null): void
     {
         /**
          *

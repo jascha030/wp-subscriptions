@@ -1,6 +1,8 @@
 <?php
 
-\class_exists(\Jascha030\WP\Subscriptions\Shared\Container\WordpressSubscriptionContainer::class);
+use Jascha030\WP\Subscriptions\Shared\Container\WordpressSubscriptionContainer;
+
+class_exists(WordpressSubscriptionContainer::class);
 
 /**
  * private function createSubscriptions($provider, $type)
