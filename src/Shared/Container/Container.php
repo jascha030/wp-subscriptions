@@ -2,8 +2,10 @@
 
 namespace Jascha030\WP\Subscriptions\Shared\Container;
 
-use Jascha030\WP\Subscriptions\Factory\SubscriptionFactory;
+use Closure;
+use Exception;
 use Jascha030\WP\Subscriptions\Shared\Singleton;
+use Jascha030\WP\Subscriptions\Subscription;
 use Psr\Container\ContainerInterface;
 
 /**
@@ -13,45 +15,11 @@ use Psr\Container\ContainerInterface;
  */
 class Container extends Singleton implements ContainerInterface
 {
-    protected static $instance;
-
     protected $resolved = [];
 
     protected $bindings = [];
 
     protected $entries = [];
-
-    protected $shared = [];
-
-    /**
-     * @param string $abstract
-     * @param string|\Closure|mixed|null $concrete Class constant / Closure / Object
-     * @param bool $shared
-     */
-    public function bind(string $abstract, $concrete = null, $shared = false)
-    {
-        if (is_null($concrete) && class_exists($abstract)) {
-            $concrete = $abstract;
-        }
-
-        if (is_object($concrete)) {
-            $this->resolved[$abstract] = true;
-            // Todo: what if shared
-            $this->entries[$abstract] = $concrete;
-        }
-
-        $this->bindings[$abstract]['concrete'] = $concrete;
-        $this->bindings[$abstract]['shared']   = $shared;
-    }
-
-    /**
-     * @param string $abstract
-     * @param \Jascha030\WP\Subscriptions\Factory\SubscriptionFactory $factory
-     */
-    public function bindFactory(string $abstract, SubscriptionFactory $factory)
-    {
-        $this->bind($abstract, $factory);
-    }
 
     /**
      * @param string $id
@@ -66,6 +34,36 @@ class Container extends Singleton implements ContainerInterface
     }
 
     /**
+     * @param string $id
+     *
+     * @return bool
+     */
+    public function has($id): bool
+    {
+        return $this->bound($id) || $this->resolved($id);
+    }
+
+    /**
+     * @param string $abstract
+     * @param string|\Closure|mixed|null $concrete Class constant / Closure / Object
+     * @param bool $shared
+     */
+    public function bind(string $abstract, $concrete = null, $shared = false): void
+    {
+        if (is_null($concrete) && class_exists($abstract)) {
+            $concrete = $abstract;
+        }
+
+        if (is_object($concrete)) {
+            $this->resolved[$abstract] = true;
+            $this->entries[$abstract]  = $concrete;
+        }
+
+        $this->bindings[$abstract]['concrete'] = $concrete;
+        $this->bindings[$abstract]['shared']   = $shared;
+    }
+
+    /**
      * @param $abstract
      * @param array $arguments
      *
@@ -75,11 +73,11 @@ class Container extends Singleton implements ContainerInterface
     public function make($abstract, $arguments = [])
     {
         if (! $this->bound($abstract)) {
-            throw new \Exception("Abstract {$abstract}, not bound");
+            throw new Exception("Abstract {$abstract}, not bound");
         }
 
         if (! $this->factoryInstance($abstract)) {
-            throw new \Exception("Concrete for {$abstract} does not implement " . Factory::class);
+            throw new Exception("Concrete for {$abstract} does not implement " . Subscription::class);
         }
 
         return call_user_func([$this->concrete($abstract), 'create'], $arguments);
@@ -94,67 +92,36 @@ class Container extends Singleton implements ContainerInterface
      */
     protected function resolve(string $abstract, $parameters = [])
     {
-        if (! $this->bound($abstract)) {
-            throw new \Exception("Abstract: {$abstract}, not bound");
+        if ($this->resolved($abstract)) {
+            return $this->entries[$abstract];
         }
 
-        if ($this->resolved($abstract)) {
-            return $this->shared($abstract) ? $this->shared[$abstract] : $this->entries[$abstract];
+        if (! $this->bound($abstract)) {
+            throw new Exception("Abstract: {$abstract}, not bound");
         }
 
         $concrete = $this->bindings[$abstract]['concrete'];
-        $prop     = $this->shared($abstract) ? 'entries' : 'shared';
 
-        if ($concrete instanceof \Closure) {
-            $entry = call_user_func($concrete, ...$parameters);
+        if ($concrete instanceof Closure) {
+            $entry = $concrete(...$parameters);
         }
 
         if (is_string($concrete) && class_exists($concrete)) {
             $entry = empty($parameters) ? new $concrete() : $concrete(...$parameters);
         }
 
-        if (is_object($concrete) && ! $concrete instanceof \Closure) {
+        if (is_object($concrete) && ! $concrete instanceof Closure) {
             $entry = $concrete;
         }
 
         if (! isset($entry)) {
-            throw new \Exception("Entry for {$abstract} could not be resolved");
+            throw new Exception("Entry for {$abstract} could not be resolved");
         }
 
-        $this->{$prop}[$abstract]  = $entry;
+        $this->entries[$abstract]  = $entry;
         $this->resolved[$abstract] = true;
 
         return $entry;
-    }
-
-    /**
-     * @param string $id
-     *
-     * @return bool
-     */
-    public function has($id): bool
-    {
-        return $this->exists($id);
-    }
-
-    /**
-     * @param $abstract
-     *
-     * @return bool
-     */
-    protected function exists($abstract): bool
-    {
-        return $this->bound($abstract) || $this->resolved($abstract);
-    }
-
-    protected function shared($abstract): bool
-    {
-        return ! empty($this->shared[$abstract]) || $this->sharedBinding($abstract);
-    }
-
-    protected function sharedBinding($abstract): bool
-    {
-        return $this->bindings[$abstract]['shared'];
     }
 
     protected function bound($abstract): bool
@@ -164,7 +131,7 @@ class Container extends Singleton implements ContainerInterface
 
     protected function factoryInstance($abstract): bool
     {
-        return (class_exists($abstract) && in_array(SubscriptionFactory::class, class_implements($abstract)));
+        return (class_exists($abstract) && is_subclass_of(Subscription::class, $abstract));
     }
 
     protected function concrete($abstract)
@@ -172,7 +139,7 @@ class Container extends Singleton implements ContainerInterface
         return $this->bindings[$abstract]['concrete'];
     }
 
-    protected function resolved($abstract)
+    protected function resolved($abstract): bool
     {
         return isset($this->resolved[$abstract]) && $this->resolved[$abstract];
     }

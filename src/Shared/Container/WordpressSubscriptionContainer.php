@@ -2,17 +2,21 @@
 
 namespace Jascha030\WP\Subscriptions\Shared\Container;
 
+use Exception;
 use Jascha030\WP\Subscriptions\Exception\DoesNotImplementProviderException;
-use Jascha030\WP\Subscriptions\Manager\ItemTypes;
+use Jascha030\WP\Subscriptions\Manager\SubscriptionManager;
 use Jascha030\WP\Subscriptions\Provider\SubscriptionProvider;
 use Jascha030\WP\Subscriptions\Shared\DefinitionConfig;
+use Jascha030\WP\Subscriptions\Subscription;
+
+use function class_alias;
 
 class WordpressSubscriptionContainer extends Container
 {
     /**
      * @var array|\Jascha030\WP\Subscriptions\Shared\DefinitionConfig
      */
-    protected $definitions = [];
+    protected $definitions;
 
     protected $providerBindings = [];
 
@@ -25,34 +29,52 @@ class WordpressSubscriptionContainer extends Container
         $this->definitions = new DefinitionConfig();
     }
 
+    /**
+     * @param int $type
+     * @param string|null $key
+     *
+     * @return mixed
+     * @throws \Exception
+     */
     public function getDefinition(int $type, string $key = null)
     {
         return $this->definitions->getDefinition($type, $key);
     }
 
-    public function run()
+    public function bindProvider(string $abstract, $concrete = null, $shared = false): void
     {
-        $this->createSubscriptionsFromProvidedData();
+        if ($this->canBindProvider($abstract)) {
+            $this->providerBindings[] = $abstract;
+        }
 
-        foreach ($this->subscriptions as &$subscription) {
+        $this->bind($abstract, $concrete, $shared = false);
+    }
+
+    /**
+     * Init and activate all subscriptions
+     *
+     * @throws \Exception
+     */
+    public function run(): void
+    {
+        $this->initSubscriptions();
+
+        foreach ($this->subscriptions as $subscription) {
             try {
                 $subscription->subscribe();
-            } catch (\Exception $exception) {
+            } catch (Exception $exception) {
                 $this->failed[$subscription->getUuid()] = $exception->getMessage();
             }
         }
     }
 
-    public function bind(string $abstract, $concrete = null, $shared = false)
-    {
-        if (is_subclass_of($abstract, SubscriptionProvider::class) && ! in_array($abstract, $this->providerBindings)) {
-            $this->providerBindings[] = $abstract;
-        }
-
-        parent::bind($abstract, $concrete, $shared = false);
-    }
-
-    public function register($abstract, $provider = null)
+    /**
+     * @param $abstract
+     * @param null $provider
+     *
+     * @throws \Jascha030\WP\Subscriptions\Exception\DoesNotImplementProviderException
+     */
+    public function register($abstract, $provider = null): void
     {
         if (is_object($abstract) && ! $provider) {
             $provider = $abstract;
@@ -60,49 +82,22 @@ class WordpressSubscriptionContainer extends Container
         }
 
         if (! is_subclass_of($abstract, SubscriptionProvider::class)) {
-            throw new DoesNotImplementProviderException();
+            throw new DoesNotImplementProviderException($abstract);
         }
 
         if (! $this->bound($abstract)) {
-            $this->bind($abstract, $provider);
+            $this->bindProvider($abstract, $provider);
         }
     }
 
-    protected function createSubscriptionsFromProvidedData()
-    {
-        foreach ($this->providerBindings as $abstract) {
-            $binding = $this->bindings[$abstract];
-
-            /** Backwards compatibility */
-            if (is_object($binding['concrete'])) {
-                $abstract = $binding['concrete'];
-            }
-
-            foreach ($this->getDefinition(DefinitionConfig::CREATION_METHOD) as $type => $method) {
-                $this->subscriptions = array_merge($this->subscriptions, $this->createSubscriptions($abstract, $type));
-            }
-        }
-    }
-
-    protected function createSubscriptions($provider, string $type)
-    {
-        $creationMethod = $this->getDefinition(DefinitionConfig::CREATION_METHOD, $type);
-        if (! $creationMethod) {
-            return [];
-        }
-
-        if (! $this->bound($creationMethod)) {
-            $this->bind($creationMethod);
-        }
-
-        if (is_string($provider)) {
-            $provider = $this->resolve($provider);
-        }
-
-        return ($this->resolve($creationMethod))->create($provider, ['type' => $type]);
-    }
-
-    public function getProviderData(SubscriptionProvider $provider, $type)
+    /**
+     * @param \Jascha030\WP\Subscriptions\Provider\SubscriptionProvider $provider
+     * @param $type
+     *
+     * @return array
+     * @throws \Exception
+     */
+    public function getProviderData(SubscriptionProvider $provider, $type): array
     {
         $prop = $this->getDefinition(DefinitionConfig::PROPERTY, $type);
 
@@ -114,40 +109,77 @@ class WordpressSubscriptionContainer extends Container
     }
 
     /**
-     * Todo: move to plugin
+     * @param $provider
+     * @param string $subscriptionClass
      *
-     * @param int $type
-     *
-     * @return array|null
+     * @return array
+     * @throws \Exception
      */
-    public function getList(int $type = ItemTypes::PROVIDERS)
+    protected function createSubscriptions($provider, string $subscriptionClass): array
     {
-        $data = [];
+        $provider = is_string($provider) ? $this->resolve($provider) : $provider;
 
-        switch ($type) {
-            case ItemTypes::PROVIDERS:
-                $data = $this->providerBindings;
-                break;
-            case ItemTypes::SUBSCRIPTIONS:
-                foreach ($this->subscriptions as $subscription) {
-                    $data[$subscription->getUuid()] = $subscription->info();
-                }
-                break;
-            case ItemTypes::FAILED_SUBSCRIPTIONS:
-                $data = $this->failed;
-                break;
-            default:
-                return null;
-                break;
+        if (! is_subclass_of($subscriptionClass, Subscription::class)) {
+            return [];
         }
 
-        $list = [];
-        foreach ($data as $key => $item) {
-            $list[$key] = (is_object($item)) ? $item : get_class($item);
+        try {
+            return $subscriptionClass::create($provider, $subscriptionClass);
+        } catch (Exception $e) {
+            return [];
+        }
+    }
+
+    /**
+     * @throws \Exception
+     */
+    protected function initSubscriptions(): void
+    {
+        $this->subscriptions = [];
+
+        foreach ($this->providerBindings as $abstract) {
+            $abstract = $this->concreteBinding($abstract);
+
+            foreach ($this->getDefinition(DefinitionConfig::SUBSCRIPTION) as $providerType => $subscriptionType) {
+                array_push($this->subscriptions, ...$this->createSubscriptions($abstract, $subscriptionType));
+            }
+        }
+    }
+
+    /**
+     * Check concrete for binding and return it if it exists.
+     * Mainly for Backwards compatibility
+     *
+     * @param string $abstract
+     *
+     * @return mixed|string
+     */
+    protected function concreteBinding(string $abstract)
+    {
+        $binding = $this->bindings[$abstract];
+
+        return is_object($binding['concrete']) ? $binding['concrete'] : $abstract;
+    }
+
+    protected function canBindProvider($abstract): bool
+    {
+        if (is_object($abstract)) {
+            $abstract = get_class($abstract);
         }
 
-        return $list;
+        return is_subclass_of($abstract, SubscriptionProvider::class) && ! $this->bound($abstract);
     }
 }
 
-\class_alias(WordpressSubscriptionContainer::class, \Jascha030\WP\Subscriptions\Manager\SubscriptionManager::class);
+/**
+ * function to call as replacement for entry in $_GLOBALS
+ *
+ * @return mixed
+ */
+function WPSC()
+{
+    return WordpressSubscriptionContainer::getInstance();
+}
+
+// Backwards compatibility
+class_alias(WordpressSubscriptionContainer::class, SubscriptionManager::class);

@@ -17,7 +17,7 @@ class PluginAPI extends Singleton
                 $container->register($abstract, $provider);
             }
         }
-        
+
         if ($create) {
             $container->run();
         }
@@ -42,10 +42,8 @@ class PluginAPI extends Singleton
     {
         if (is_string($provider)) {
             $abstract = $provider;
-        } else if (is_object($provider)){
-            $abstract = get_class($provider);
         } else {
-            $abstract = null;
+            $abstract = is_object($provider) ? get_class($provider) : null;
         }
 
         return $abstract;

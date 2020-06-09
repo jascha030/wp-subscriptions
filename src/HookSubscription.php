@@ -3,70 +3,57 @@
 namespace Jascha030\WP\Subscriptions;
 
 use Jascha030\WP\Subscriptions\Exception\InvalidArgumentException;
-use Jascha030\WP\Subscriptions\Exception\NotCallableException;
-use Jascha030\WP\Subscriptions\Exception\SubscriptionException;
+use Jascha030\WP\Subscriptions\Provider\SubscriptionProvider;
+use Jascha030\WP\Subscriptions\Shared\DefinitionConfig;
+
+use function Jascha030\WP\Subscriptions\Shared\Container\WPSC;
 
 /**
  * Class HookSubscription
  *
  * @package Jascha030\WP\Subscriptions
  */
-class HookSubscription extends Subscription implements Unsubscribable
+abstract class HookSubscription extends Subscription
 {
-    const METHOD = '';
+    protected const CONTEXT = '';
 
-    const UNSUB_METHOD = '';
-
-    protected $data;
-
-    public function __construct($tag, $callable, $priority = 10, $acceptedArguments = 1)
+    /**
+     * @param \Jascha030\WP\Subscriptions\Provider\SubscriptionProvider $provider
+     * @param $context
+     *
+     * @return array
+     * @throws \Jascha030\WP\Subscriptions\Exception\InvalidArgumentException
+     */
+    public static function create(SubscriptionProvider $provider, $context): array
     {
-        parent::__construct();
+        $subscriptions = [];
+        $data          = WPSC()->getProviderData($provider, $context);
 
-        if (! is_callable($callable)) {
-            throw new InvalidArgumentException("variable is not a valid callable");
+        foreach ($data as $tag => $parameters) {
+            $callable = [$provider, is_array($parameters) ? $parameters[0] : $parameters];
+
+            if (! is_callable($callable)) {
+                throw new InvalidArgumentException('variable is not a valid callable');
+            }
+
+            $priority          = (is_array($parameters)) ? $parameters[1] ?? 10 : 10;
+            $acceptedArguments = (is_array($parameters)) ? $parameters[2] ?? 1 : 1;
+
+            $subscription = new $context();
+            $subscription->setData(compact('tag', 'callable', 'priority', 'acceptedArguments'));
+            $subscriptions[] = $subscription;
         }
 
-        $this->data = [
-            'tag'               => $tag,
-            'callable'          => $callable,
-            'priority'          => $priority,
-            'acceptedArguments' => $acceptedArguments
-        ];
+        return !empty($subscriptions) ? $subscriptions : [];
     }
 
-    public function info()
+    protected function activation(): void
     {
-        $methodString = null;
-
-        if ((is_array($this->data['callable']))) {
-            $methodString = (is_string($this->data['callable'][0])) ? $this->data['callable'][0] : get_class($this->data['callable'][0]);
-            $methodString .= ' ' . $this->data['callable'][1];
-        }
-
-        return $methodString ?? $this->data['callable'];
+        call_user_func('add_' . static::CONTEXT, ...array_values($this->data));
     }
 
-    public function subscribe()
+    protected function termination(): void
     {
-        if (! is_callable($this->data['callable']) && ! function_exists($this->data['callable'])) {
-            throw new NotCallableException("Invalid callable");
-        }
-
-        if (! empty(static::METHOD)) {
-            call_user_func(static::METHOD, $this->data['tag'], $this->data['callable'], $this->data['priority'],
-                $this->data['acceptedArguments']);
-            parent::subscribe();
-        }
-    }
-
-    public function unsubscribe()
-    {
-        if ($this->isActive()) {
-            throw new SubscriptionException("Can't unsubscribe before subscribing");
-        } else {
-            call_user_func(static::UNSUB_METHOD, ...$this->data);
-            $this->active = false;
-        }
+        call_user_func('remove_' . static::CONTEXT, ...$this->data);
     }
 }

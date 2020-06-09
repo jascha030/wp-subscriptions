@@ -11,10 +11,12 @@ use ReflectionMethod;
  * Class AutoProvider
  *
  * @package Jascha030\WP\Subscriptions\Provider\Auto
+ * @deprecated
+ * @todo: replace with AjaxProvider or something along those lines
  */
 class AutoProvider
 {
-    USE Provider;
+    use Provider;
 
     /**
      * @var ReflectionClass
@@ -36,7 +38,7 @@ class AutoProvider
      *
      * @return array
      */
-    protected function init(array $exclude = null)
+    protected function init(array $exclude = null): array
     {
         $hooks = [];
 
@@ -46,7 +48,8 @@ class AutoProvider
             if (strpos($name, '__') !== 0) {
                 continue;
             }
-            if (! empty($exclude) && in_array($name, $exclude)) {
+
+            if (! empty($exclude) && in_array($name, $exclude, true)) {
                 continue;
             }
 
@@ -61,12 +64,12 @@ class AutoProvider
      *
      * @return string
      */
-    protected function fromCamelCase(string $input)
+    protected function fromCamelCase(string $input): string
     {
         preg_match_all('!([A-Z][A-Z0-9]*(?=$|[A-Z][a-z0-9])|[A-Za-z][a-z0-9]+)!', $input, $matches);
         $ret = $matches[0];
         foreach ($ret as &$match) {
-            $match = $match == strtoupper($match) ? strtolower($match) : lcfirst($match);
+            $match = $match === strtoupper($match) ? strtolower($match) : lcfirst($match);
         }
 
         return implode('_', $ret);
