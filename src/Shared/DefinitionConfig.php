@@ -8,6 +8,7 @@ use Jascha030\WP\Subscriptions\FilterSubscription;
 use Jascha030\WP\Subscriptions\Provider\ActionProvider;
 use Jascha030\WP\Subscriptions\Provider\FilterProvider;
 use Jascha030\WP\Subscriptions\Provider\ShortcodeProvider;
+use Jascha030\WP\Subscriptions\ShortcodeSubscription;
 
 class DefinitionConfig
 {
@@ -23,9 +24,9 @@ class DefinitionConfig
     ];
 
     public const PREDEFINED_PROVIDER_DATA_PROPERTIES = [
-        ActionProvider::class    => 'actions',
-        FilterProvider::class    => 'filters',
-        ShortcodeProvider::class => 'shortcodes'
+        ActionSubscription::class    => 'actions',
+        FilterSubscription::class    => 'filters',
+        ShortcodeSubscription::class => 'shortcodes'
     ];
 
     private $definitions = [];

@@ -16,7 +16,7 @@ class WordpressSubscriptionContainer extends Container
     /**
      * @var array|\Jascha030\WP\Subscriptions\Shared\DefinitionConfig
      */
-    protected $definitions = [];
+    protected $definitions;
 
     protected $providerBindings = [];
 
@@ -135,10 +135,10 @@ class WordpressSubscriptionContainer extends Container
      */
     protected function initSubscriptions(): void
     {
+        $this->subscriptions = [];
+
         foreach ($this->providerBindings as $abstract) {
             $abstract = $this->concreteBinding($abstract);
-
-            $this->subscriptions = [];
 
             foreach ($this->getDefinition(DefinitionConfig::SUBSCRIPTION) as $providerType => $subscriptionType) {
                 array_push($this->subscriptions, ...$this->createSubscriptions($abstract, $subscriptionType));
@@ -163,7 +163,9 @@ class WordpressSubscriptionContainer extends Container
 
     protected function canBindProvider($abstract): bool
     {
-        $abstract = is_object($abstract) ? get_class($abstract) : null;
+        if (is_object($abstract)) {
+            $abstract = get_class($abstract);
+        }
 
         return is_subclass_of($abstract, SubscriptionProvider::class) && ! $this->bound($abstract);
     }

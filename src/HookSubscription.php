@@ -28,7 +28,6 @@ abstract class HookSubscription extends Subscription
     {
         $subscriptions = [];
         $data          = WPSC()->getProviderData($provider, $context);
-        $type          = WPSC()->getDefinition(DefinitionConfig::SUBSCRIPTION, $context);
 
         foreach ($data as $tag => $parameters) {
             $callable = [$provider, is_array($parameters) ? $parameters[0] : $parameters];
@@ -40,16 +39,17 @@ abstract class HookSubscription extends Subscription
             $priority          = (is_array($parameters)) ? $parameters[1] ?? 10 : 10;
             $acceptedArguments = (is_array($parameters)) ? $parameters[2] ?? 1 : 1;
 
-            $subscription = new $type();
+            $subscription = new $context();
             $subscription->setData(compact('tag', 'callable', 'priority', 'acceptedArguments'));
+            $subscriptions[] = $subscription;
         }
 
-        return $subscriptions;
+        return !empty($subscriptions) ? $subscriptions : [];
     }
 
     protected function activation(): void
     {
-        call_user_func('add_' . static::CONTEXT, ...$this->data);
+        call_user_func('add_' . static::CONTEXT, ...array_values($this->data));
     }
 
     protected function termination(): void

@@ -29,6 +29,11 @@ abstract class Subscription implements Subscribable
 
     abstract public static function create(SubscriptionProvider $provider, $context);
 
+    public function setData(array $data): void
+    {
+        $this->data = $data;
+    }
+
     final public function getId(): string
     {
         return $this->id;
