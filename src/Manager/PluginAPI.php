@@ -23,21 +23,6 @@ class PluginAPI extends Singleton
         }
     }
 
-    public static function listProviders()
-    {
-        return (WordpressSubscriptionContainer::getInstance())->getList(ItemTypes::PROVIDERS);
-    }
-
-    public static function listSubscriptions()
-    {
-        return (WordpressSubscriptionContainer::getInstance())->getList(ItemTypes::SUBSCRIPTIONS);
-    }
-
-    public static function listFailedSubscriptions()
-    {
-        return (WordpressSubscriptionContainer::getInstance())->getList(ItemTypes::FAILED_SUBSCRIPTIONS);
-    }
-
     protected function getAbstract($provider)
     {
         if (is_string($provider)) {
