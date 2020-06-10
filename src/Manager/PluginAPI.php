@@ -5,6 +5,11 @@ namespace Jascha030\WP\Subscriptions\Manager;
 use Jascha030\WP\Subscriptions\Shared\Container\WordpressSubscriptionContainer;
 use Jascha030\WP\Subscriptions\Shared\Singleton;
 
+/**
+ * PluginAPI
+ *
+ * @deprecated
+ */
 class PluginAPI extends Singleton
 {
     public function __construct($providers = [], $create = true)
@@ -21,21 +26,6 @@ class PluginAPI extends Singleton
         if ($create) {
             $container->run();
         }
-    }
-
-    public static function listProviders()
-    {
-        return (WordpressSubscriptionContainer::getInstance())->getList(ItemTypes::PROVIDERS);
-    }
-
-    public static function listSubscriptions()
-    {
-        return (WordpressSubscriptionContainer::getInstance())->getList(ItemTypes::SUBSCRIPTIONS);
-    }
-
-    public static function listFailedSubscriptions()
-    {
-        return (WordpressSubscriptionContainer::getInstance())->getList(ItemTypes::FAILED_SUBSCRIPTIONS);
     }
 
     protected function getAbstract($provider)

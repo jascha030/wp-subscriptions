@@ -2,12 +2,16 @@
 
 namespace Jascha030\WP\Subscriptions\Shared;
 
-use Exception;
 use Jascha030\WP\Subscriptions\ActionSubscription;
+use Jascha030\WP\Subscriptions\Exception\DoesNotImplementProviderException;
+use Jascha030\WP\Subscriptions\Exception\DoesNotImplementSubscriptionException;
+use Jascha030\WP\Subscriptions\Exception\InvalidArgumentException;
+use Jascha030\WP\Subscriptions\Exception\SubscriptionException;
 use Jascha030\WP\Subscriptions\FilterSubscription;
 use Jascha030\WP\Subscriptions\Provider\ActionProvider;
 use Jascha030\WP\Subscriptions\Provider\FilterProvider;
 use Jascha030\WP\Subscriptions\Provider\ShortcodeProvider;
+use Jascha030\WP\Subscriptions\Provider\SubscriptionProvider;
 use Jascha030\WP\Subscriptions\ShortcodeSubscription;
 
 class DefinitionConfig
@@ -19,8 +23,9 @@ class DefinitionConfig
      * @var \Jascha030\WP\Subscriptions\Subscription[]
      */
     public const PREDEFINED_PROVIDER_SUBSCRIPTION_TYPES = [
-        ActionProvider::class => ActionSubscription::class,
-        FilterProvider::class => FilterSubscription::class
+        ActionProvider::class    => ActionSubscription::class,
+        FilterProvider::class    => FilterSubscription::class,
+        ShortcodeProvider::class => ShortcodeSubscription::class
     ];
 
     public const PREDEFINED_PROVIDER_DATA_PROPERTIES = [
@@ -55,7 +60,7 @@ class DefinitionConfig
                 break;
         }
 
-        throw new Exception("Unknown definition");
+        throw new SubscriptionException("Unknown definition for: {$type} - {$key}");
     }
 
     /**
@@ -69,28 +74,37 @@ class DefinitionConfig
     /**
      * @return array|string[]
      */
-    public function getProviderDataProperties(): array
-    {
-        return $this->definitions['providerDataProperties'];
-    }
-
-    /**
-     * @return array|string[]
-     */
     public function getProviderMethods(): array
     {
         return $this->definitions['creationMethods'];
     }
 
-    public function registerSubscriptionType(string $providerClass, string $dataClass, $creationMethod = null): void
+    /**
+     * Register new Subscription type
+     *
+     * @param string $providerClass
+     * @param string $subscriptionClass
+     * @param string $property
+     *
+     * @throws \Jascha030\WP\Subscriptions\Exception\DoesNotImplementProviderException
+     * @throws \Jascha030\WP\Subscriptions\Exception\DoesNotImplementSubscriptionException
+     * @throws \Jascha030\WP\Subscriptions\Exception\InvalidArgumentException
+     */
+    public function registerSubscriptionType(string $providerClass, string $subscriptionClass, string $property): void
     {
-        /**
-         *
-         * Todo: implement
-         *
-         * Need provider class
-         * Need data / subscription class
-         * Need creation method in form of Factory class / Callable / null = dataclass without constructor
-         */
+        if (! class_exists($providerClass) || is_subclass_of($providerClass, SubscriptionProvider::class)) {
+            throw new DoesNotImplementProviderException("Invalid class: {$providerClass}");
+        }
+
+        if (! class_exists($subscriptionClass) || is_subclass_of($providerClass, SubscriptionProvider::class)) {
+            throw new DoesNotImplementSubscriptionException("Invalid provider class: {$subscriptionClass}");
+        }
+
+        if (! property_exists($subscriptionClass, $property)) {
+            throw new InvalidArgumentException("Property: {$property}, does not exist on {$subscriptionClass}");
+        }
+
+        $this->definitions['subscriptionTypes'][$providerClass]          = $subscriptionClass;
+        $this->definitions['providerDataProperties'][$subscriptionClass] = $property;
     }
 }
