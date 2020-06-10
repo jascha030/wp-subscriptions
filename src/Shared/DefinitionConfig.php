@@ -2,10 +2,10 @@
 
 namespace Jascha030\WP\Subscriptions\Shared;
 
-use http\Exception\InvalidArgumentException;
 use Jascha030\WP\Subscriptions\ActionSubscription;
 use Jascha030\WP\Subscriptions\Exception\DoesNotImplementProviderException;
 use Jascha030\WP\Subscriptions\Exception\DoesNotImplementSubscriptionException;
+use Jascha030\WP\Subscriptions\Exception\InvalidArgumentException;
 use Jascha030\WP\Subscriptions\Exception\SubscriptionException;
 use Jascha030\WP\Subscriptions\FilterSubscription;
 use Jascha030\WP\Subscriptions\Provider\ActionProvider;
@@ -79,6 +79,17 @@ class DefinitionConfig
         return $this->definitions['creationMethods'];
     }
 
+    /**
+     * Register new Subscription type
+     *
+     * @param string $providerClass
+     * @param string $subscriptionClass
+     * @param string $property
+     *
+     * @throws \Jascha030\WP\Subscriptions\Exception\DoesNotImplementProviderException
+     * @throws \Jascha030\WP\Subscriptions\Exception\DoesNotImplementSubscriptionException
+     * @throws \Jascha030\WP\Subscriptions\Exception\InvalidArgumentException
+     */
     public function registerSubscriptionType(string $providerClass, string $subscriptionClass, string $property): void
     {
         if (! class_exists($providerClass) || is_subclass_of($providerClass, SubscriptionProvider::class)) {
