@@ -5,6 +5,11 @@ namespace Jascha030\WP\Subscriptions\Manager;
 use Jascha030\WP\Subscriptions\Shared\Container\WordpressSubscriptionContainer;
 use Jascha030\WP\Subscriptions\Shared\Singleton;
 
+/**
+ * PluginAPI
+ *
+ * @deprecated
+ */
 class PluginAPI extends Singleton
 {
     public function __construct($providers = [], $create = true)
