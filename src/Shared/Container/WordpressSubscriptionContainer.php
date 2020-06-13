@@ -8,10 +8,11 @@ use Jascha030\WP\Subscriptions\Manager\SubscriptionManager;
 use Jascha030\WP\Subscriptions\Provider\SubscriptionProvider;
 use Jascha030\WP\Subscriptions\Shared\DefinitionConfig;
 use Jascha030\WP\Subscriptions\Subscription;
+use Runnable;
 
 use function class_alias;
 
-class WordpressSubscriptionContainer extends Container
+class WordpressSubscriptionContainer extends Container implements Runnable
 {
     /**
      * @var array|\Jascha030\WP\Subscriptions\Shared\DefinitionConfig
