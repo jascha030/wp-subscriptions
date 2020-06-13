@@ -1,5 +1,7 @@
 <?php
 
+namespace Jascha030\WP\Subscriptions\Runnable;
+
 /**
  * Interface Runnable
  */
