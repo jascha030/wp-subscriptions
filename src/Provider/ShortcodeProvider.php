@@ -9,8 +9,4 @@ namespace Jascha030\WP\Subscriptions\Provider;
  */
 interface ShortcodeProvider extends SubscriptionProvider
 {
-    /**
-     * @return array
-     */
-    public static function getShortcodes();
 }

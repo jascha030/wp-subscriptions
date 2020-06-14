@@ -15,5 +15,13 @@
     "psr-4": {
       "Jascha030\\WP\\Subscriptions\\": "src/"
     }
+  },
+  "require": {
+    "psr/container": "^1.0"
+  },
+  "config": {
+    "platform": {
+      "php": "7.1.0"
+    }
   }
 }

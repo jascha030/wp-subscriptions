@@ -3,53 +3,74 @@
 namespace Jascha030\WP\Subscriptions;
 
 use Jascha030\WP\Subscriptions\Exception\SubscriptionException;
+use Jascha030\WP\Subscriptions\Provider\SubscriptionProvider;
 
 /**
  * Class Subscription
  *
  * @package Jascha030\WP\Subscriptions
  */
-class Subscription implements Subscribable
+abstract class Subscription implements Subscribable
 {
-    protected $uuid;
+    public const ID_PREFIX = 'wpsc_';
 
-    protected $active = false;
+    private static $constructorToken;
 
-    public function __construct()
+    protected $data;
+
+    private $id;
+
+    private $active = false;
+
+    final protected function __construct()
     {
-        $this->uuid = uniqid();
+        $this->id = uniqid(static::ID_PREFIX, true);
     }
 
-    public function info()
+    abstract public static function create(SubscriptionProvider $provider, $context);
+
+    public function setData(array $data): void
     {
-        return get_class($this);
+        $this->data = $data;
     }
 
-    /**
-     * @throws SubscriptionException
-     */
-    public function subscribe()
+    final public function getId(): string
     {
-        if ($this->isActive()) {
-            throw new SubscriptionException("Already subscribed");
-        } else {
-            $this->active = true;
-        }
+        return $this->id;
     }
 
-    /**
-     * @return bool
-     */
-    public function isActive(): bool
+    final public function getActive(): bool
     {
         return $this->active;
     }
 
     /**
-     * @return string
+     * @throws SubscriptionException
      */
-    public function getUuid(): string
+    final public function subscribe(): void
     {
-        return $this->uuid;
+        if ($this->getActive()) {
+            throw new SubscriptionException("Already subscribed to {$this->id}");
+        }
+
+        $this->active = true;
+        $this->activation();
     }
+
+    /**
+     * @throws \Jascha030\WP\Subscriptions\Exception\SubscriptionException
+     */
+    final public function unsubscribe(): void
+    {
+        if (! $this->getActive()) {
+            throw new SubscriptionException("Already unsubscribed to {$this->id}");
+        }
+
+        $this->active = false;
+        $this->termination();
+    }
+
+    abstract protected function activation();
+
+    abstract protected function termination();
 }

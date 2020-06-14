@@ -3,68 +3,68 @@
 namespace Jascha030\WP\Subscriptions;
 
 use Jascha030\WP\Subscriptions\Exception\InvalidArgumentException;
-use Jascha030\WP\Subscriptions\Exception\NotCallableException;
+use Jascha030\WP\Subscriptions\Provider\SubscriptionProvider;
+
+use function Jascha030\WP\Subscriptions\Shared\Container\WPSC;
 
 /**
  * Class HookSubscription
  *
  * @package Jascha030\WP\Subscriptions
  */
-class HookSubscription extends Subscription
+abstract class HookSubscription extends Subscription
 {
-    /**
-     * @var
-     */
-    protected $tag;
+    protected const CONTEXT = '';
 
     /**
-     * @var callable
-     */
-    protected $callable;
-
-    /**
-     * HookSubscription constructor.
+     * @param \Jascha030\WP\Subscriptions\Provider\SubscriptionProvider $provider
+     * @param $context
      *
-     * @param $tag
-     * @param $callable
-     *
-     * @throws InvalidArgumentException
+     * @return array
+     * @throws \Jascha030\WP\Subscriptions\Exception\InvalidArgumentException
      */
-    public function __construct($tag, $callable)
+    public static function create(SubscriptionProvider $provider, $context): array
     {
-        parent::__construct();
+        $subscriptions = [];
+        $data          = WPSC()->getProviderData($provider, $context);
+
+        foreach ($data as $tag => $parameters) {
+            if (is_array($parameters) && is_array($parameters[0])) {
+                foreach ($parameters as $params) {
+                    $subscriptions[] = static::createSubscriptionObject($provider, $tag, $params, $context);
+                }
+            } else {
+                $subscriptions[] = static::createSubscriptionObject($provider, $tag, $parameters, $context);
+            }
+        }
+
+        return ! empty($subscriptions) ? $subscriptions : [];
+    }
+
+    protected static function createSubscriptionObject(SubscriptionProvider $provider, $tag, $parameters, $context)
+    {
+        $callable = [$provider, is_array($parameters) ? $parameters[0] : $parameters];
 
         if (! is_callable($callable)) {
-            throw new InvalidArgumentException("variable is not a valid callable");
+            throw new InvalidArgumentException('variable is not a valid callable');
         }
 
-        $this->tag = $tag;
+        $priority          = (is_array($parameters)) ? $parameters[1] ?? 10 : 10;
+        $acceptedArguments = (is_array($parameters)) ? $parameters[2] ?? 1 : 1;
 
-        $this->callable = $callable;
+        $subscription = new $context();
+        $subscription->setData(compact('tag', 'callable', 'priority', 'acceptedArguments'));
+
+        return $subscription;
     }
 
-    public function info()
+    protected function activation(): void
     {
-        $methodString = null;
-
-        if ((is_array($this->callable))) {
-            $methodString = (is_string($this->callable[0])) ? $this->callable[0] : get_class($this->callable[0]);
-            $methodString .= ' ' . $this->callable[1];
-        }
-
-        return $methodString ?? $this->callable;
+        call_user_func('add_' . static::CONTEXT, ...array_values($this->data));
     }
 
-    /**
-     * @throws NotCallableException
-     * @throws Exception\SubscriptionException
-     */
-    public function subscribe()
+    protected function termination(): void
     {
-        if (! is_callable($this->callable) && ! function_exists($this->callable)) {
-            throw new NotCallableException("Invalid callable");
-        }
-
-        parent::subscribe();
+        call_user_func('remove_' . static::CONTEXT, ...$this->data);
     }
 }
