@@ -4,7 +4,6 @@ namespace Jascha030\WP\Subscriptions;
 
 use Jascha030\WP\Subscriptions\Exception\InvalidArgumentException;
 use Jascha030\WP\Subscriptions\Provider\SubscriptionProvider;
-use Jascha030\WP\Subscriptions\Shared\DefinitionConfig;
 
 use function Jascha030\WP\Subscriptions\Shared\Container\WPSC;
 
@@ -30,21 +29,33 @@ abstract class HookSubscription extends Subscription
         $data          = WPSC()->getProviderData($provider, $context);
 
         foreach ($data as $tag => $parameters) {
-            $callable = [$provider, is_array($parameters) ? $parameters[0] : $parameters];
-
-            if (! is_callable($callable)) {
-                throw new InvalidArgumentException('variable is not a valid callable');
+            if (is_array($parameters) && is_array($parameters[0])) {
+                foreach ($parameters as $params) {
+                    $subscriptions[] = static::createSubscriptionObject($provider, $tag, $params, $context);
+                }
+            } else {
+                $subscriptions[] = static::createSubscriptionObject($provider, $tag, $parameters, $context);
             }
-
-            $priority          = (is_array($parameters)) ? $parameters[1] ?? 10 : 10;
-            $acceptedArguments = (is_array($parameters)) ? $parameters[2] ?? 1 : 1;
-
-            $subscription = new $context();
-            $subscription->setData(compact('tag', 'callable', 'priority', 'acceptedArguments'));
-            $subscriptions[] = $subscription;
         }
 
-        return !empty($subscriptions) ? $subscriptions : [];
+        return ! empty($subscriptions) ? $subscriptions : [];
+    }
+
+    protected static function createSubscriptionObject(SubscriptionProvider $provider, $tag, $parameters, $context)
+    {
+        $callable = [$provider, is_array($parameters) ? $parameters[0] : $parameters];
+
+        if (! is_callable($callable)) {
+            throw new InvalidArgumentException('variable is not a valid callable');
+        }
+
+        $priority          = (is_array($parameters)) ? $parameters[1] ?? 10 : 10;
+        $acceptedArguments = (is_array($parameters)) ? $parameters[2] ?? 1 : 1;
+
+        $subscription = new $context();
+        $subscription->setData(compact('tag', 'callable', 'priority', 'acceptedArguments'));
+
+        return $subscription;
     }
 
     protected function activation(): void
