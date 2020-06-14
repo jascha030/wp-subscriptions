@@ -6,9 +6,9 @@ use Exception;
 use Jascha030\WP\Subscriptions\Exception\DoesNotImplementProviderException;
 use Jascha030\WP\Subscriptions\Manager\SubscriptionManager;
 use Jascha030\WP\Subscriptions\Provider\SubscriptionProvider;
+use Jascha030\WP\Subscriptions\Runnable\Runnable;
 use Jascha030\WP\Subscriptions\Shared\DefinitionConfig;
 use Jascha030\WP\Subscriptions\Subscription;
-use Runnable;
 
 use function class_alias;
 
