@@ -1,7 +1,7 @@
 {
   "name": "jascha030/wp-subscriptions",
   "description": "OOP Interface for using the WP Plugin API (Hooks)",
-  "version": "1.0.3",
+  "version": "2.0.1",
   "license": "MIT",
   "authors": [
     {
