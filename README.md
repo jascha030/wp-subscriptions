@@ -50,8 +50,8 @@ class ExampleProvider implements ActionProvider
         'plugins_loaded' => 'load', // Hook => method
         'pre_get_posts' => ['doQueryStuff', 10, 1], // Example with priority and number of arguments
         'wp_loaded' => [
-            'loaded',
-            'moreLoaded'
+            ['loaded'],
+            ['moreLoaded']
         ], // Example of multiple methods hooked to one action hook
     ];
     
