@@ -19,9 +19,6 @@ class DefinitionConfig
     public const SUBSCRIPTION = 0;
     public const PROPERTY = 1;
 
-    /**
-     * @var \Jascha030\WP\Subscriptions\Subscription[]
-     */
     public const PREDEFINED_PROVIDER_SUBSCRIPTION_TYPES = [
         ActionProvider::class    => ActionSubscription::class,
         FilterProvider::class    => FilterSubscription::class,
@@ -51,32 +48,14 @@ class DefinitionConfig
      */
     public function getDefinition(int $type, string $key = null)
     {
-        switch ($type) {
-            case self::SUBSCRIPTION:
-                return $key ? $this->definitions['subscriptionTypes'][$key] : $this->definitions['subscriptionTypes'];
-                break;
-            case self::PROPERTY:
-                return $key ? $this->definitions['providerDataProperties'][$key] : $this->definitions['providerDataProperties'];
-                break;
+        if ($type === self::SUBSCRIPTION) {
+            return $key ? $this->definitions['subscriptionTypes'][$key] : $this->definitions['subscriptionTypes'];
+        }
+        if ($type === self::PROPERTY) {
+            return $key ? $this->definitions['providerDataProperties'][$key] : $this->definitions['providerDataProperties'];
         }
 
         throw new SubscriptionException("Unknown definition for: {$type} - {$key}");
-    }
-
-    /**
-     * @return array|string[]
-     */
-    public function getSubscriptionTypes(): array
-    {
-        return $this->definitions['subscriptionTypes'];
-    }
-
-    /**
-     * @return array|string[]
-     */
-    public function getProviderMethods(): array
-    {
-        return $this->definitions['creationMethods'];
     }
 
     /**

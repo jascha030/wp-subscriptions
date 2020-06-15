@@ -10,8 +10,6 @@ use Jascha030\WP\Subscriptions\Runnable\Runnable;
 use Jascha030\WP\Subscriptions\Shared\DefinitionConfig;
 use Jascha030\WP\Subscriptions\Subscription;
 
-use function class_alias;
-
 class WordpressSubscriptionContainer extends Container implements Runnable
 {
     protected $definitions;
@@ -159,8 +157,3 @@ function WPSC()
 {
     return WordpressSubscriptionContainer::getInstance();
 }
-
-/**
- * Backwards compatibility
- */
-class_alias(WordpressSubscriptionContainer::class, SubscriptionManager::class);

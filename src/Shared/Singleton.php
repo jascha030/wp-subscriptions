@@ -16,7 +16,6 @@ class Singleton
     }
 
     /**
-     * __clone
      * Oi mate! In a galaxy far far away cloned men sound like they are from New Zealand...
      *
      * This is illegal therefore declared private, don't make me call in the feds

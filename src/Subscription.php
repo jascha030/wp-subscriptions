@@ -10,7 +10,7 @@ use Jascha030\WP\Subscriptions\Provider\SubscriptionProvider;
  *
  * @package Jascha030\WP\Subscriptions
  */
-abstract class Subscription implements Subscribable
+abstract class Subscription
 {
     public const ID_PREFIX = 'wpsc_';
 
@@ -25,7 +25,6 @@ abstract class Subscription implements Subscribable
         $this->id = uniqid(static::ID_PREFIX, true);
     }
 
-    abstract public static function create(SubscriptionProvider $provider, $context);
 
     public function setData(array $data): void
     {
@@ -35,11 +34,6 @@ abstract class Subscription implements Subscribable
     final public function getId(): string
     {
         return $this->id;
-    }
-
-    final public function getActive(): bool
-    {
-        return $this->active;
     }
 
     /**
@@ -67,6 +61,8 @@ abstract class Subscription implements Subscribable
         $this->active = false;
         $this->termination();
     }
+    
+    abstract public static function create(SubscriptionProvider $provider, $context);
 
     abstract protected function activation();
 
