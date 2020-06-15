@@ -14,8 +14,6 @@ abstract class Subscription implements Subscribable
 {
     public const ID_PREFIX = 'wpsc_';
 
-    private static $constructorToken;
-
     protected $data;
 
     private $id;

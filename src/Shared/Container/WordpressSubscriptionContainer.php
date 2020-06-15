@@ -14,9 +14,6 @@ use function class_alias;
 
 class WordpressSubscriptionContainer extends Container implements Runnable
 {
-    /**
-     * @var array|\Jascha030\WP\Subscriptions\Shared\DefinitionConfig
-     */
     protected $definitions;
 
     protected $providerBindings = [];
@@ -42,31 +39,31 @@ class WordpressSubscriptionContainer extends Container implements Runnable
         return $this->definitions->getDefinition($type, $key);
     }
 
-    public function bindProvider(string $abstract, $concrete = null, $shared = false): void
+    /**
+     * @param \Jascha030\WP\Subscriptions\Provider\SubscriptionProvider $provider
+     * @param $type
+     *
+     * @return array
+     * @throws \Exception
+     */
+    public function getProviderData(SubscriptionProvider $provider, $type): array
+    {
+        $prop = $this->getDefinition(DefinitionConfig::PROPERTY, $type);
+
+        if (property_exists(get_class($provider), $prop)) {
+            return $provider::$$prop;
+        }
+
+        return [];
+    }
+
+    public function bindProvider(string $abstract, $concrete = null): void
     {
         if ($this->canBindProvider($abstract)) {
             $this->providerBindings[] = $abstract;
         }
 
-        $this->bind($abstract, $concrete, $shared = false);
-    }
-
-    /**
-     * Init and activate all subscriptions
-     *
-     * @throws \Exception
-     */
-    public function run(): void
-    {
-        $this->initSubscriptions();
-
-        foreach ($this->subscriptions as $subscription) {
-            try {
-                $subscription->subscribe();
-            } catch (Exception $exception) {
-                $this->failed[$subscription->getUuid()] = $exception->getMessage();
-            }
-        }
+        $this->bind($abstract, $concrete);
     }
 
     /**
@@ -92,21 +89,21 @@ class WordpressSubscriptionContainer extends Container implements Runnable
     }
 
     /**
-     * @param \Jascha030\WP\Subscriptions\Provider\SubscriptionProvider $provider
-     * @param $type
+     * Init and activate all subscriptions
      *
-     * @return array
      * @throws \Exception
      */
-    public function getProviderData(SubscriptionProvider $provider, $type): array
+    public function run(): void
     {
-        $prop = $this->getDefinition(DefinitionConfig::PROPERTY, $type);
+        $this->initSubscriptions();
 
-        if (property_exists(get_class($provider), $prop)) {
-            return $provider::$$prop;
+        foreach ($this->subscriptions as $subscription) {
+            try {
+                $subscription->subscribe();
+            } catch (Exception $exception) {
+                $this->failed[$subscription->getUuid()] = $exception->getMessage();
+            }
         }
-
-        return [];
     }
 
     /**
@@ -136,8 +133,6 @@ class WordpressSubscriptionContainer extends Container implements Runnable
      */
     protected function initSubscriptions(): void
     {
-        $this->subscriptions = [];
-
         foreach ($this->providerBindings as $abstract) {
             $abstract = $this->concreteBinding($abstract);
 
@@ -147,26 +142,9 @@ class WordpressSubscriptionContainer extends Container implements Runnable
         }
     }
 
-    /**
-     * Check concrete for binding and return it if it exists.
-     * Mainly for Backwards compatibility
-     *
-     * @param string $abstract
-     *
-     * @return mixed|string
-     */
-    protected function concreteBinding(string $abstract)
-    {
-        $binding = $this->bindings[$abstract];
-
-        return is_object($binding['concrete']) ? $binding['concrete'] : $abstract;
-    }
-
     protected function canBindProvider($abstract): bool
     {
-        if (is_object($abstract)) {
-            $abstract = get_class($abstract);
-        }
+        $abstract = (is_object($abstract)) ? get_class($abstract) : $abstract;
 
         return is_subclass_of($abstract, SubscriptionProvider::class) && ! $this->bound($abstract);
     }
@@ -175,12 +153,14 @@ class WordpressSubscriptionContainer extends Container implements Runnable
 /**
  * function to call as replacement for entry in $_GLOBALS
  *
- * @return mixed
+ * @return \Jascha030\WP\Subscriptions\Shared\Container\WordpressSubscriptionContainer
  */
 function WPSC()
 {
     return WordpressSubscriptionContainer::getInstance();
 }
 
-// Backwards compatibility
+/**
+ * Backwards compatibility
+ */
 class_alias(WordpressSubscriptionContainer::class, SubscriptionManager::class);

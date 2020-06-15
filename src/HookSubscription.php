@@ -22,6 +22,7 @@ abstract class HookSubscription extends Subscription
      *
      * @return array
      * @throws \Jascha030\WP\Subscriptions\Exception\InvalidArgumentException
+     * @throws \Exception
      */
     public static function create(SubscriptionProvider $provider, $context): array
     {

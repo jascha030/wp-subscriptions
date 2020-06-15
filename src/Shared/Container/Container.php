@@ -139,6 +139,20 @@ class Container extends Singleton implements ContainerInterface
         return $this->bindings[$abstract]['concrete'];
     }
 
+    /**
+     * Check concrete for binding and return it if it exists.
+     *
+     * @param string $abstract
+     *
+     * @return mixed|string
+     */
+    protected function concreteBinding(string $abstract)
+    {
+        $binding = $this->bindings[$abstract];
+
+        return is_object($binding['concrete']) ? $binding['concrete'] : $abstract;
+    }
+
     protected function resolved($abstract): bool
     {
         return isset($this->resolved[$abstract]) && $this->resolved[$abstract];
