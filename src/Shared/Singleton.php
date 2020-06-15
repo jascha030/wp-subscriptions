@@ -6,7 +6,7 @@ class Singleton
 {
     protected static $instance;
 
-    final public static function getInstance(): Singleton
+    final public static function getInstance()
     {
         if (is_null(static::$instance)) {
             static::$instance = new static();

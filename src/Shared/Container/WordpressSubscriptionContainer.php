@@ -4,7 +4,6 @@ namespace Jascha030\WP\Subscriptions\Shared\Container;
 
 use Exception;
 use Jascha030\WP\Subscriptions\Exception\DoesNotImplementProviderException;
-use Jascha030\WP\Subscriptions\Manager\SubscriptionManager;
 use Jascha030\WP\Subscriptions\Provider\SubscriptionProvider;
 use Jascha030\WP\Subscriptions\Runnable\Runnable;
 use Jascha030\WP\Subscriptions\Shared\DefinitionConfig;
@@ -48,11 +47,7 @@ class WordpressSubscriptionContainer extends Container implements Runnable
     {
         $prop = $this->getDefinition(DefinitionConfig::PROPERTY, $type);
 
-        if (property_exists(get_class($provider), $prop)) {
-            return $provider::$$prop;
-        }
-
-        return [];
+        return (property_exists(get_class($provider), $prop)) ? $provider::$$prop : [];
     }
 
     public function bindProvider(string $abstract, $concrete = null): void
@@ -113,11 +108,11 @@ class WordpressSubscriptionContainer extends Container implements Runnable
      */
     protected function createSubscriptions($provider, string $subscriptionClass): array
     {
-        $provider = is_string($provider) ? $this->resolve($provider) : $provider;
-
         if (! is_subclass_of($subscriptionClass, Subscription::class)) {
             return [];
         }
+
+        $provider = is_string($provider) ? $this->resolve($provider) : $provider;
 
         try {
             return $subscriptionClass::create($provider, $subscriptionClass);

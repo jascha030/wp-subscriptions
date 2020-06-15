@@ -37,12 +37,17 @@ abstract class Subscription
         return $this->id;
     }
 
+    final public function active(): bool
+    {
+        return $this->active;
+    }
+
     /**
      * @throws SubscriptionException
      */
     final public function subscribe(): void
     {
-        if ($this->getActive()) {
+        if ($this->active()) {
             throw new SubscriptionException("Already subscribed to {$this->id}");
         }
 
@@ -55,7 +60,7 @@ abstract class Subscription
      */
     final public function unsubscribe(): void
     {
-        if (! $this->getActive()) {
+        if (! $this->active()) {
             throw new SubscriptionException("Already unsubscribed to {$this->id}");
         }
 

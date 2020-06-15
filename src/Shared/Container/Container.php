@@ -3,10 +3,10 @@
 namespace Jascha030\WP\Subscriptions\Shared\Container;
 
 use Closure;
-use Exception;
 use Jascha030\WP\Subscriptions\Shared\Singleton;
 use Jascha030\WP\Subscriptions\Subscription;
 use Psr\Container\ContainerInterface;
+use RuntimeException;
 
 /**
  * Class Container
@@ -73,11 +73,11 @@ class Container extends Singleton implements ContainerInterface
     public function make($abstract, $arguments = [])
     {
         if (! $this->bound($abstract)) {
-            throw new Exception("Abstract {$abstract}, not bound");
+            throw new RuntimeException("Abstract {$abstract}, not bound");
         }
 
         if (! $this->factoryInstance($abstract)) {
-            throw new Exception("Concrete for {$abstract} does not implement " . Subscription::class);
+            throw new RuntimeException("Concrete for {$abstract} does not implement " . Subscription::class);
         }
 
         return call_user_func([$this->concrete($abstract), 'create'], $arguments);
@@ -97,7 +97,7 @@ class Container extends Singleton implements ContainerInterface
         }
 
         if (! $this->bound($abstract)) {
-            throw new Exception("Abstract: {$abstract}, not bound");
+            throw new RuntimeException("Abstract: {$abstract}, not bound");
         }
 
         $concrete = $this->bindings[$abstract]['concrete'];
@@ -115,7 +115,7 @@ class Container extends Singleton implements ContainerInterface
         }
 
         if (! isset($entry)) {
-            throw new Exception("Entry for {$abstract} could not be resolved");
+            throw new RuntimeException("Entry for {$abstract} could not be resolved");
         }
 
         $this->entries[$abstract]  = $entry;

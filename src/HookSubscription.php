@@ -42,6 +42,15 @@ abstract class HookSubscription extends Subscription
         return ! empty($subscriptions) ? $subscriptions : [];
     }
 
+    /**
+     * @param \Jascha030\WP\Subscriptions\Provider\SubscriptionProvider $provider
+     * @param $tag
+     * @param $parameters
+     * @param $context
+     *
+     * @return mixed
+     * @throws \Jascha030\WP\Subscriptions\Exception\InvalidArgumentException
+     */
     protected static function createSubscriptionObject(SubscriptionProvider $provider, $tag, $parameters, $context)
     {
         $callable = [$provider, is_array($parameters) ? $parameters[0] : $parameters];
