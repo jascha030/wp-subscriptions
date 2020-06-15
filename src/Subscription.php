@@ -12,7 +12,7 @@ use Jascha030\WP\Subscriptions\Provider\SubscriptionProvider;
  */
 abstract class Subscription
 {
-    public const ID_PREFIX = 'wpsc_';
+    protected const ID_PREFIX = 'wpsc_';
 
     protected $data;
 
@@ -25,6 +25,7 @@ abstract class Subscription
         $this->id = uniqid(static::ID_PREFIX, true);
     }
 
+    abstract public static function create(SubscriptionProvider $provider, $context);
 
     public function setData(array $data): void
     {
@@ -61,8 +62,6 @@ abstract class Subscription
         $this->active = false;
         $this->termination();
     }
-    
-    abstract public static function create(SubscriptionProvider $provider, $context);
 
     abstract protected function activation();
 

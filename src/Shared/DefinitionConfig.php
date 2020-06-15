@@ -31,12 +31,14 @@ class DefinitionConfig
         ShortcodeSubscription::class => 'shortcodes'
     ];
 
-    private $definitions = [];
+    private $definitions;
 
     public function __construct()
     {
-        $this->definitions['subscriptionTypes']      = self::PREDEFINED_PROVIDER_SUBSCRIPTION_TYPES;
-        $this->definitions['providerDataProperties'] = self::PREDEFINED_PROVIDER_DATA_PROPERTIES;
+        $this->definitions = [
+            'subscriptionTypes'      => self::PREDEFINED_PROVIDER_SUBSCRIPTION_TYPES,
+            'providerDataProperties' => self::PREDEFINED_PROVIDER_DATA_PROPERTIES
+        ];
     }
 
     /**
