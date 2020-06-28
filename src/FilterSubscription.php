@@ -74,7 +74,7 @@ class FilterSubscription extends Subscription
             throw new InvalidArgumentException('variable is not a valid callable');
         }
 
-        $priority          = (is_array($parameters)) ? $parameters[1] ?? 10 : 10;
+        $priority = (is_array($parameters)) ? $parameters[1] ?? 10 : 10;
         $acceptedArguments = (is_array($parameters)) ? $parameters[2] ?? 1 : 1;
 
         $subscription = new $context();
@@ -120,15 +120,15 @@ class FilterSubscription extends Subscription
     /**
      * @param string $tag
      * @param callable $callable
-     * @param int $prio
+     * @param int $priority
      * @param int $acceptedArgs
      *
      * @return $this
      */
-    private function add(string $tag, callable $callable, int $prio = 10, int $acceptedArgs = 1): FilterSubscription
+    private function add(string $tag, callable $callable, int $priority = 10, int $acceptedArgs = 1): FilterSubscription
     {
         $method = 'add_' . static::CONTEXT;
-        $method($tag, $callable, $prio, $acceptedArgs);
+        $method($tag, $callable, $priority, $acceptedArgs);
 
         return $this;
     }
@@ -146,10 +146,22 @@ class FilterSubscription extends Subscription
         return $this;
     }
 
-    private function remove(string $tag, callable $callable, int $prio = 10, int $acceptedArgs = 1): FilterSubscription
-    {
+    /**
+     * @param string $tag
+     * @param callable $callable
+     * @param int $priority
+     * @param int $acceptedArgs
+     *
+     * @return \Jascha030\WP\Subscriptions\FilterSubscription
+     */
+    private function remove(
+        string $tag,
+        callable $callable,
+        int $priority = 10,
+        int $acceptedArgs = 1
+    ): FilterSubscription {
         $method = 'remove_' . static::CONTEXT;
-        $method($tag, $callable, $prio, $acceptedArgs);
+        $method($tag, $callable, $priority, $acceptedArgs);
 
         return $this;
     }
