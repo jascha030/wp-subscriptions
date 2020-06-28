@@ -10,7 +10,7 @@ use Jascha030\WP\Subscriptions\Provider\SubscriptionProvider;
  *
  * @package Jascha030\WP\Subscriptions
  */
-abstract class Subscription
+abstract class Subscription extends PropertyOverload
 {
     protected const ID_PREFIX = 'wpsc_';
 
@@ -20,14 +20,22 @@ abstract class Subscription
 
     private $active = false;
 
-    final protected function __construct()
+    final public function __construct()
     {
         $this->id = uniqid(static::ID_PREFIX, true);
     }
 
+    /**
+     * Implement Factory method
+     *
+     * @param \Jascha030\WP\Subscriptions\Provider\SubscriptionProvider $provider
+     * @param $context
+     *
+     * @return mixed
+     */
     abstract public static function create(SubscriptionProvider $provider, $context);
 
-    public function setData(array $data): void
+    final public function set(array $data): void
     {
         $this->data = $data;
     }
@@ -68,7 +76,18 @@ abstract class Subscription
         $this->termination();
     }
 
-    abstract protected function activation();
+    /**
+     * Unhook subscribed methods
+     */
+    public function __destruct()
+    {
+        try {
+            $this->termination();
+        } catch (\Exception $e) {
+        }
+    }
 
-    abstract protected function termination();
+    abstract protected function activation(): void;
+
+    abstract protected function termination(): void;
 }
