@@ -24,14 +24,9 @@ class WordpressSubscriptionContainer extends Container implements Runnable
         $this->definitions = new DefinitionConfig();
     }
 
-    public function getSubscriptionById(string $id)
+    final public function getSubscriptionById(string $id): ?Subscription
     {
-        return $this->subscriptions[$id];
-    }
-
-    public function updateHookSubscription(string $id)
-    {
-        $this->subscriptions[$id]->called++;
+        return $this->subscriptions[$id] ?? null;
     }
 
     /**
@@ -111,7 +106,7 @@ class WordpressSubscriptionContainer extends Container implements Runnable
     }
 
     /**
-     * @param $provider
+     * @param SubscriptionProvider|string $provider
      * @param string $subscriptionClass
      *
      * @return array
@@ -132,6 +127,11 @@ class WordpressSubscriptionContainer extends Container implements Runnable
         }
     }
 
+    /**
+     * @param Object|string $abstract
+     *
+     * @return bool
+     */
     private function canBindProvider($abstract): bool
     {
         $abstract = (is_object($abstract)) ? get_class($abstract) : $abstract;

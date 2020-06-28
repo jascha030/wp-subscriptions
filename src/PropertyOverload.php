@@ -18,11 +18,11 @@ class PropertyOverload
     private $data = [];
 
     /**
-     * @param $name
+     * @param string $name
      *
      * @return mixed|null
      */
-    public function __get($name)
+    public function __get(string $name)
     {
         return $this->data[$name] ?? null;
     }

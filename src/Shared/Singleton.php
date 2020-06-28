@@ -6,7 +6,7 @@ class Singleton
 {
     protected static $instance;
 
-    final public static function getInstance()
+    final public static function getInstance(): Singleton
     {
         if (is_null(static::$instance)) {
             static::$instance = new static();
@@ -25,7 +25,7 @@ class Singleton
     /**
      * grabyabrushandputalittlemakeup... hidethescarstofadeawaytheshakup...
      */
-    private function __wakeup()
+    private function __wakeup(): void
     {
     }
 }

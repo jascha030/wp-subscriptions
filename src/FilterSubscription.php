@@ -25,13 +25,13 @@ class FilterSubscription extends Subscription
 
     /**
      * @param \Jascha030\WP\Subscriptions\Provider\SubscriptionProvider $provider
-     * @param $context
+     * @param string $context
      *
      * @return array
      * @throws \Jascha030\WP\Subscriptions\Exception\InvalidArgumentException
      * @throws \Exception
      */
-    public static function create(SubscriptionProvider $provider, $context): array
+    public static function create(SubscriptionProvider $provider, string $context): array
     {
         $subscriptions = [];
         $data          = WPSC()->getProviderData($provider, $context);
@@ -93,6 +93,9 @@ class FilterSubscription extends Subscription
         return $this->called > 0;
     }
 
+    /**
+     * @throws \Jascha030\WP\Subscriptions\Exception\SubscriptionException
+     */
     final public function activation(): void
     {
         if (! $this->activating()) {

@@ -28,7 +28,7 @@ class Container extends Singleton implements ContainerInterface
      * @return \Closure|mixed|string
      * @throws \Exception
      */
-    public function get($id, $params = [])
+    final public function get($id, array $params = [])
     {
         return $this->resolve($id);
     }
@@ -38,7 +38,7 @@ class Container extends Singleton implements ContainerInterface
      *
      * @return bool
      */
-    public function has($id): bool
+    final public function has($id): bool
     {
         return $this->bound($id) || $this->resolved($id);
     }

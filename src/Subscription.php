@@ -2,6 +2,7 @@
 
 namespace Jascha030\WP\Subscriptions;
 
+use Exception;
 use Jascha030\WP\Subscriptions\Exception\SubscriptionException;
 use Jascha030\WP\Subscriptions\Provider\SubscriptionProvider;
 
@@ -37,9 +38,9 @@ abstract class Subscription extends PropertyOverload
      * @param \Jascha030\WP\Subscriptions\Provider\SubscriptionProvider $provider
      * @param $context
      *
-     * @return mixed
+     * @return array
      */
-    abstract public static function create(SubscriptionProvider $provider, $context);
+    abstract public static function create(SubscriptionProvider $provider, string $context): array;
 
     final public function set(array $data): void
     {
@@ -101,7 +102,7 @@ abstract class Subscription extends PropertyOverload
     {
         try {
             $this->termination();
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
         }
     }
 
