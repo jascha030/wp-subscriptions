@@ -3,6 +3,7 @@
 namespace Jascha030\WP\Subscriptions;
 
 use Jascha030\WP\Subscriptions\Exception\InvalidArgumentException;
+use Jascha030\WP\Subscriptions\Exception\SubscriptionException;
 use Jascha030\WP\Subscriptions\Provider\SubscriptionProvider;
 
 use function Jascha030\WP\Subscriptions\Shared\Container\WPSC;
@@ -92,8 +93,12 @@ class FilterSubscription extends Subscription
         return $this->called > 0;
     }
 
-    protected function activation(): void
+    final public function activation(): void
     {
+        if (! $this->activating()) {
+            throw new SubscriptionException(static::class . 'Should not be called directly');
+        }
+
         $this->tagId = $this->getId() . '_' . $this->data['tag'];
         $callable    = $this->data['callable'];
 
@@ -102,16 +107,9 @@ class FilterSubscription extends Subscription
         };
 
         $this->add(...array_values($this->data));
-
-        add_action(
-            $this->tagId,
-            function () {
-                var_dump($this->tagId, $this->timesRan());
-            }
-        );
     }
 
-    protected function termination(): void
+    final public function termination(): void
     {
         $this->removeAll($this->tagId)->remove(...array_values($this->data));
     }

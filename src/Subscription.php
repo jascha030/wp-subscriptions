@@ -14,11 +14,17 @@ abstract class Subscription extends PropertyOverload
 {
     protected const ID_PREFIX = 'wpsc_';
 
+    private const STATUS_INITIAL = 0;
+    private const STATUS_ACTIVATING = 1;
+    private const STATUS_ACTIVE = 2;
+    private const STATUS_TERMINATING = 3;
+    private const STATUS_TERMINATED = -1;
+
     protected $data;
 
     private $id;
 
-    private $active = false;
+    private $status = self::STATUS_INITIAL;
 
     final public function __construct()
     {
@@ -47,7 +53,17 @@ abstract class Subscription extends PropertyOverload
 
     final public function active(): bool
     {
-        return $this->active;
+        return $this->status === self::STATUS_ACTIVE;
+    }
+
+    final public function activating(): bool
+    {
+        return $this->status === self::STATUS_ACTIVATING;
+    }
+
+    final public function status(): int
+    {
+        return $this->status;
     }
 
     /**
@@ -59,8 +75,9 @@ abstract class Subscription extends PropertyOverload
             throw new SubscriptionException("Already subscribed to {$this->id}");
         }
 
-        $this->active = true;
+        $this->status = self::STATUS_ACTIVATING;
         $this->activation();
+        $this->status = self::STATUS_ACTIVE;
     }
 
     /**
@@ -72,8 +89,9 @@ abstract class Subscription extends PropertyOverload
             throw new SubscriptionException("Already unsubscribed to {$this->id}");
         }
 
-        $this->active = false;
+        $this->status = self::STATUS_TERMINATING;
         $this->termination();
+        $this->status = self::STATUS_TERMINATED;
     }
 
     /**
@@ -87,7 +105,7 @@ abstract class Subscription extends PropertyOverload
         }
     }
 
-    abstract protected function activation(): void;
+    abstract public function activation(): void;
 
-    abstract protected function termination(): void;
+    abstract public function termination(): void;
 }

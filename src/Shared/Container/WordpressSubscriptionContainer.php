@@ -100,7 +100,7 @@ class WordpressSubscriptionContainer extends Container implements Runnable
     /**
      * @param int $type
      * @param string|null $key
-     *ShortcodeSubscription
+     * ShortcodeSubscription
      *
      * @return mixed
      * @throws \Exception
