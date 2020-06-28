@@ -7,7 +7,7 @@ namespace Jascha030\WP\Subscriptions;
  *
  * @package Jascha030\WP\Subscriptions
  */
-class ActionSubscription extends HookSubscription
+class ActionSubscription extends FilterSubscription
 {
     protected const CONTEXT = 'action';
 }

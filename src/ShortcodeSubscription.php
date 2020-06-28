@@ -7,7 +7,7 @@ namespace Jascha030\WP\Subscriptions;
  *
  * @package Jascha030\WP\Subscriptions
  */
-class ShortcodeSubscription extends HookSubscription
+class ShortcodeSubscription extends FilterSubscription
 {
     protected const CONTEXT = 'shortcode';
 }
