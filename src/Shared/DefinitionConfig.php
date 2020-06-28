@@ -14,7 +14,7 @@ use Jascha030\WP\Subscriptions\Provider\ShortcodeProvider;
 use Jascha030\WP\Subscriptions\Provider\SubscriptionProvider;
 use Jascha030\WP\Subscriptions\ShortcodeSubscription;
 
-class DefinitionConfig
+class DefinitionConfig extends Singleton
 {
     public const SUBSCRIPTION = 0;
     public const PROPERTY = 1;

@@ -24,16 +24,14 @@ class WordpressSubscriptionContainer extends Container implements Runnable
         $this->definitions = new DefinitionConfig();
     }
 
-    /**
-     * @param int $type
-     * @param string|null $key
-     *
-     * @return mixed
-     * @throws \Exception
-     */
-    public function getDefinition(int $type, string $key = null)
+    public function getSubscriptionById(string $id)
     {
-        return $this->definitions->getDefinition($type, $key);
+        return $this->subscriptions[$id];
+    }
+
+    public function updateHookSubscription(string $id)
+    {
+        $this->subscriptions[$id]->called++;
     }
 
     /**
@@ -65,7 +63,7 @@ class WordpressSubscriptionContainer extends Container implements Runnable
      *
      * @throws \Jascha030\WP\Subscriptions\Exception\DoesNotImplementProviderException
      */
-    public function register($abstract, $provider = null): void
+    final public function register($abstract, $provider = null): void
     {
         if (is_object($abstract) && ! $provider) {
             $provider = $abstract;
@@ -86,7 +84,7 @@ class WordpressSubscriptionContainer extends Container implements Runnable
      *
      * @throws \Exception
      */
-    public function run(): void
+    final public function run(): void
     {
         $this->initSubscriptions();
 
@@ -100,13 +98,26 @@ class WordpressSubscriptionContainer extends Container implements Runnable
     }
 
     /**
+     * @param int $type
+     * @param string|null $key
+     *ShortcodeSubscription
+     *
+     * @return mixed
+     * @throws \Exception
+     */
+    private function getDefinition(int $type, string $key = null)
+    {
+        return $this->definitions->getDefinition($type, $key);
+    }
+
+    /**
      * @param $provider
      * @param string $subscriptionClass
      *
      * @return array
      * @throws \Exception
      */
-    protected function createSubscriptions($provider, string $subscriptionClass): array
+    private function createSubscriptions($provider, string $subscriptionClass): array
     {
         if (! is_subclass_of($subscriptionClass, Subscription::class)) {
             return [];
@@ -121,25 +132,32 @@ class WordpressSubscriptionContainer extends Container implements Runnable
         }
     }
 
-    /**
-     * @throws \Exception
-     */
-    protected function initSubscriptions(): void
-    {
-        foreach ($this->providerBindings as $abstract) {
-            $abstract = $this->concreteBinding($abstract);
-
-            foreach ($this->getDefinition(DefinitionConfig::SUBSCRIPTION) as $providerType => $subscriptionType) {
-                array_push($this->subscriptions, ...$this->createSubscriptions($abstract, $subscriptionType));
-            }
-        }
-    }
-
-    protected function canBindProvider($abstract): bool
+    private function canBindProvider($abstract): bool
     {
         $abstract = (is_object($abstract)) ? get_class($abstract) : $abstract;
 
         return is_subclass_of($abstract, SubscriptionProvider::class) && ! $this->bound($abstract);
+    }
+
+    /**
+     * @throws \Exception
+     */
+    private function initSubscriptions(): void
+    {
+        $subscriptions = [];
+
+        foreach ($this->providerBindings as $abstract) {
+            $abstract   = $this->concreteBinding($abstract);
+            $definition = $this->getDefinition(DefinitionConfig::SUBSCRIPTION);
+
+            foreach ($definition as $subscriptionType) {
+                array_push($subscriptions, ...$this->createSubscriptions($abstract, $subscriptionType));
+            }
+        }
+
+        foreach ($subscriptions as $subscription) {
+            $this->subscriptions[$subscription->getId()] = $subscription;
+        }
     }
 }
 
