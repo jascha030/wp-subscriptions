@@ -106,7 +106,7 @@ class FilterSubscription extends Subscription
         add_action(
             $this->tagId,
             function () {
-                var_dump($this->tagId, $this->ran());
+                var_dump($this->tagId, $this->timesRan());
             }
         );
     }
@@ -124,7 +124,7 @@ class FilterSubscription extends Subscription
      *
      * @return $this
      */
-    private function add(string $tag, callable $callable, int $prio = 10, int $acceptedArgs = 1)
+    private function add(string $tag, callable $callable, int $prio = 10, int $acceptedArgs = 1): FilterSubscription
     {
         $method = 'add_' . static::CONTEXT;
         $method($tag, $callable, $prio, $acceptedArgs);
@@ -137,7 +137,7 @@ class FilterSubscription extends Subscription
      *
      * @return $this
      */
-    private function do(string $tag)
+    private function do(string $tag): FilterSubscription
     {
         $method = 'do_' . static::CONTEXT;
         $method($tag);
@@ -145,7 +145,7 @@ class FilterSubscription extends Subscription
         return $this;
     }
 
-    private function remove(string $tag, callable $callable, int $prio = 10, int $acceptedArgs = 1)
+    private function remove(string $tag, callable $callable, int $prio = 10, int $acceptedArgs = 1): FilterSubscription
     {
         $method = 'remove_' . static::CONTEXT;
         $method($tag, $callable, $prio, $acceptedArgs);
@@ -153,9 +153,9 @@ class FilterSubscription extends Subscription
         return $this;
     }
 
-    private function removeAll(string $tag)
+    private function removeAll(string $tag): FilterSubscription
     {
-        $method = 'remove_all' . static::CONTEXT;
+        $method = 'remove_all_' . static::CONTEXT . 's';
         $method($tag);
 
         return $this;
