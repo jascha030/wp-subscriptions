@@ -2,6 +2,7 @@
 
 namespace Jascha030\WP\Subscriptions;
 
+use Exception;
 use Jascha030\WP\Subscriptions\Exception\SubscriptionException;
 use Jascha030\WP\Subscriptions\Provider\SubscriptionProvider;
 
@@ -10,26 +11,38 @@ use Jascha030\WP\Subscriptions\Provider\SubscriptionProvider;
  *
  * @package Jascha030\WP\Subscriptions
  */
-abstract class Subscription implements Subscribable
+abstract class Subscription extends PropertyOverload
 {
-    public const ID_PREFIX = 'wpsc_';
+    protected const ID_PREFIX = 'wpsc_';
 
-    private static $constructorToken;
+    private const STATUS_INITIAL = 0;
+    private const STATUS_ACTIVATING = 1;
+    private const STATUS_ACTIVE = 2;
+    private const STATUS_TERMINATING = 3;
+    private const STATUS_TERMINATED = -1;
 
     protected $data;
 
     private $id;
 
-    private $active = false;
+    private $status = self::STATUS_INITIAL;
 
-    final protected function __construct()
+    final public function __construct()
     {
         $this->id = uniqid(static::ID_PREFIX, true);
     }
 
-    abstract public static function create(SubscriptionProvider $provider, $context);
+    /**
+     * Implement Factory method
+     *
+     * @param \Jascha030\WP\Subscriptions\Provider\SubscriptionProvider $provider
+     * @param $context
+     *
+     * @return array
+     */
+    abstract public static function create(SubscriptionProvider $provider, string $context): array;
 
-    public function setData(array $data): void
+    final public function set(array $data): void
     {
         $this->data = $data;
     }
@@ -39,9 +52,19 @@ abstract class Subscription implements Subscribable
         return $this->id;
     }
 
-    final public function getActive(): bool
+    final public function active(): bool
     {
-        return $this->active;
+        return $this->status === self::STATUS_ACTIVE;
+    }
+
+    final public function activating(): bool
+    {
+        return $this->status === self::STATUS_ACTIVATING;
+    }
+
+    final public function status(): int
+    {
+        return $this->status;
     }
 
     /**
@@ -49,12 +72,13 @@ abstract class Subscription implements Subscribable
      */
     final public function subscribe(): void
     {
-        if ($this->getActive()) {
+        if ($this->active()) {
             throw new SubscriptionException("Already subscribed to {$this->id}");
         }
 
-        $this->active = true;
+        $this->status = self::STATUS_ACTIVATING;
         $this->activation();
+        $this->status = self::STATUS_ACTIVE;
     }
 
     /**
@@ -62,15 +86,27 @@ abstract class Subscription implements Subscribable
      */
     final public function unsubscribe(): void
     {
-        if (! $this->getActive()) {
+        if (! $this->active()) {
             throw new SubscriptionException("Already unsubscribed to {$this->id}");
         }
 
-        $this->active = false;
+        $this->status = self::STATUS_TERMINATING;
         $this->termination();
+        $this->status = self::STATUS_TERMINATED;
     }
 
-    abstract protected function activation();
+    /**
+     * Unhook subscribed methods
+     */
+    public function __destruct()
+    {
+        try {
+            $this->termination();
+        } catch (Exception $e) {
+        }
+    }
 
-    abstract protected function termination();
+    abstract public function activation(): void;
+
+    abstract public function termination(): void;
 }
